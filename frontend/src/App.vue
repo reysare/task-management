@@ -1,120 +1,109 @@
 <template>
-  <!-- Main layout container for the entire application, now ensures header spans full width -->
   <div class="main-layout">
-    <!-- Header section for the application title, now truly full width and enhanced visually -->
+    <!-- Header with subtle branding and full width -->
     <header class="app-header">
-      <h1 class="header-title">Daily Life Tasks</h1>
+      <h1 class="header-title">Daily Flow</h1>
+      <p class="header-tagline">Kelola tugas harianmu dengan mudah.</p>
     </header>
 
-    <!-- Wrapper for the two main content cards: Add Task and Task List, ensuring they are centered -->
-    <div class="content-wrapper">
-      <!-- Loading indicator with spinner -->
-      <div v-if="isLoading" class="loading-overlay">
-        <div class="spinner"></div>
-        <p>Memuat...</p>
-      </div>
+    <!-- Loading overlay with spinner -->
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+      <p class="loading-text">Memuat tugas...</p>
+    </div>
 
+    <!-- Main content area, centered and responsive -->
+    <div class="content-wrapper">
       <!-- Card for adding a new task -->
       <div class="card add-task-card">
-        <h2 class="card-title">Tambahkan Tugas Baru</h2>
-        <!-- Form for inputting new task details -->
+        <h2 class="card-title">Tambah Aktivitas Baru</h2>
         <form @submit.prevent="addTask" class="form">
-          <!-- Input field for the activity title -->
-          <input
-            v-model="newTask"
-            type="text"
-            placeholder="Judul Aktivitas"
-            class="input"
-            :disabled="isLoading"
-          />
-          <!-- Input field for the deadline date -->
-          <input
-            v-model="newDeadline"
-            type="date"
-            class="input"
-            :disabled="isLoading"
-          />
-          <!-- Button to submit and add the new task -->
-          <button type="submit" class="btn-add" :disabled="isLoading">
-            Tambah Tugas
+          <div class="input-group">
+            <input
+              v-model="newTask"
+              type="text"
+              placeholder="Apa yang perlu kamu lakukan?"
+              class="input-field"
+              :disabled="isLoading"
+            />
+            <label for="newDeadline" class="input-label">Tenggat Waktu</label>
+            <input
+              v-model="newDeadline"
+              type="date"
+              id="newDeadline"
+              class="input-field date-input"
+              :disabled="isLoading"
+            />
+          </div>
+          <button type="submit" class="btn-primary" :disabled="isLoading">
+            Tambah Tugas <i class="fas fa-plus-circle"></i>
           </button>
         </form>
       </div>
 
       <!-- Card for displaying the list of tasks -->
       <div class="card task-list-card">
-        <h2 class="card-title">Daftar Tugas Anda</h2>
-        <!-- User ID display removed as per user request -->
-        <!-- <p v-if="$userId" class="user-id-display">User ID: {{ $userId }}</p> -->
-
-        <!-- List of tasks, displayed only if there are tasks in the array -->
+        <h2 class="card-title">Daftar Aktivitasmu</h2>
         <ul v-if="tasks.length" class="task-list">
-          <!-- Loop through each task to display it -->
           <li v-for="task in tasks" :key="task.id" class="task-item">
-            <div class="task-left">
-              <!-- Checkbox to mark task as complete or incomplete -->
+            <div class="task-details">
               <input
                 type="checkbox"
                 :checked="task.is_done"
                 @change="toggleDone(task)"
-                class="checkbox"
+                class="task-checkbox"
                 :disabled="isLoading"
               />
-              <!-- Container for task title and deadline -->
-              <div class="task-content">
-                <!-- Conditional rendering: show edit input if task is being edited -->
+              <div class="task-content-display">
                 <div v-if="editingTaskId === task.id" class="edit-mode">
                   <input
                     v-model="editedTaskTitle"
                     type="text"
-                    class="input-edit"
+                    class="input-edit-task"
                     :disabled="isLoading"
                   />
-                  <div class="edit-buttons">
-                    <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">Simpan</button>
-                    <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">Batal</button>
+                  <div class="edit-actions">
+                    <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">
+                      Simpan
+                    </button>
+                    <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">
+                      Batal
+                    </button>
                   </div>
                 </div>
-                <!-- Conditional rendering: show task details if not in edit mode -->
                 <div v-else class="display-mode">
-                  <span :class="{ done: task.is_done }" class="task-title">
+                  <span :class="{ 'task-title-done': task.is_done }" class="task-title-main">
                     {{ task.title }}
                   </span>
-                  <!-- Deadline with icon for better separation and styling -->
-                  <span class="task-deadline">
-                    <i class="far fa-calendar-alt task-icon"></i> <!-- Icon for calendar, added task-icon class -->
+                  <span class="task-deadline-info">
+                    <i class="far fa-calendar-alt task-icon"></i>
                     {{ task.deadline }}
                   </span>
                 </div>
               </div>
             </div>
-
-            <!-- Container for task action buttons (edit and delete) -->
-            <div class="task-actions">
-              <!-- Edit button, visible only if not currently editing this task -->
+            <div class="task-actions-group">
               <button
                 v-if="editingTaskId !== task.id"
                 @click="startEdit(task)"
-                class="btn-action btn-edit"
+                class="btn-icon btn-edit"
                 title="Edit tugas"
                 :disabled="isLoading"
               >
-                ✏️
+                <i class="fas fa-pen"></i>
               </button>
-              <!-- Delete button -->
               <button
                 @click="deleteTask(task.id)"
-                class="btn-action btn-delete"
+                class="btn-icon btn-delete"
                 title="Hapus tugas"
                 :disabled="isLoading"
               >
-                🗑️
+                <i class="fas fa-trash-alt"></i>
               </button>
             </div>
           </li>
         </ul>
-        <!-- Message displayed when no tasks are present -->
-        <p v-else class="no-task">Belum ada tugas ditemukan 😴</p>
+        <p v-else class="no-task-message">Belum ada tugas. Yuk, tambahkan yang baru! 🎉</p>
       </div>
     </div>
   </div>
@@ -131,7 +120,7 @@ export default {
       newDeadline: "",
       editingTaskId: null,
       editedTaskTitle: "",
-      isLoading: true, // State for global loading indicator (used for initial fetch)
+      isLoading: true, // Set to true initially as data fetch is asynchronous
       unsubscribe: null, // To store the onSnapshot unsubscribe function
     };
   },
@@ -140,10 +129,8 @@ export default {
     '$userId': {
       handler(newUserId) {
         if (newUserId) {
-          // If userId is available, start fetching tasks
           this.fetchTasksRealtime();
         } else {
-          // If userId becomes null (e.g., logout), unsubscribe and clear tasks
           if (this.unsubscribe) {
             this.unsubscribe();
             this.unsubscribe = null;
@@ -151,43 +138,52 @@ export default {
           this.tasks = [];
         }
       },
-      immediate: true // Run handler immediately on component creation
+      immediate: true
     }
   },
   beforeUnmount() {
-    // Unsubscribe from real-time updates when the component is destroyed
     if (this.unsubscribe) {
       this.unsubscribe();
     }
   },
   methods: {
-    // Use real-time listener for fetching tasks
     fetchTasksRealtime() {
-      // Ensure db, appId, and userId are available
       if (!this.$db || !this.$appId || !this.$userId) {
         console.warn("Firebase atau ID pengguna belum tersedia.");
         return;
       }
 
-      this.isLoading = true; // Show loading spinner for the initial data load
+      this.isLoading = true;
 
-      // Construct the Firestore collection path using appId and userId
       const tasksCollectionRef = collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`);
       const q = query(tasksCollectionRef);
 
-      // Set up real-time listener
       this.unsubscribe = onSnapshot(q, (snapshot) => {
         const fetchedTasks = [];
         snapshot.forEach((doc) => {
           fetchedTasks.push({ id: doc.id, ...doc.data() });
         });
-        this.tasks = fetchedTasks;
-        this.isLoading = false; // Hide loading spinner once data is loaded
+        this.tasks = fetchedTasks.sort((a, b) => {
+          // Sort by is_done (false first), then by deadline (ascending), then by created_at (descending)
+          if (a.is_done !== b.is_done) {
+            return a.is_done ? 1 : -1; // Done tasks last
+          }
+          if (a.deadline && b.deadline) {
+            return new Date(a.deadline) - new Date(b.deadline);
+          }
+          if (a.created_at && b.created_at) {
+              // Assuming created_at is a Firebase Timestamp
+              const dateA = a.created_at.toDate ? a.created_at.toDate() : new Date(a.created_at);
+              const dateB = b.created_at.toDate ? b.created_at.toDate() : new Date(b.created_at);
+              return dateB - dateA; // Newest first
+          }
+          return 0;
+        });
+        this.isLoading = false;
         console.log("Tugas diambil secara real-time:", this.tasks);
       }, (error) => {
         console.error("Error saat mengambil tugas real-time:", error);
-        this.isLoading = false; // Hide loading on error
-        // Provide user feedback for error
+        this.isLoading = false;
       });
     },
 
@@ -195,32 +191,28 @@ export default {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
       try {
-        // Firestore automatically handles adding a new document and reflecting it via onSnapshot
         await addDoc(collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`), {
           title: this.newTask,
           deadline: this.newDeadline,
           is_done: false,
-          created_at: new Date(), // Add a timestamp for potential ordering/sorting
+          created_at: new Date(),
         });
-        // Clear form inputs immediately after initiating addDoc
         this.newTask = "";
         this.newDeadline = "";
         console.log("Tugas ditambahkan ke Firestore.");
       } catch (err) {
         console.error("Gagal menambahkan tugas:", err);
-        // Provide user feedback (e.g., using a toast notification)
       }
     },
 
     async deleteTask(id) {
-      if (!id) return; // Ensure ID exists
+      if (!id) return;
 
       try {
         await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
         console.log(`Tugas dengan ID ${id} dihapus.`);
       } catch (err) {
         console.error("Gagal menghapus tugas:", err);
-        // Provide user feedback
       }
     },
 
@@ -229,12 +221,11 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          is_done: !task.is_done, // Toggle the 'is_done' status
+          is_done: !task.is_done,
         });
         console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
-        // Provide user feedback
       }
     },
 
@@ -253,14 +244,13 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          title: this.editedTaskTitle, // Update only the title
+          title: this.editedTaskTitle,
         });
-        this.editingTaskId = null; // Exit edit mode
-        this.editedTaskTitle = ""; // Clear edited title
+        this.editingTaskId = null;
+        this.editedTaskTitle = "";
         console.log(`Tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui tugas:", err);
-        // Provide user feedback
       }
     },
   },
@@ -268,333 +258,404 @@ export default {
 </script>
 
 <style scoped>
-/* Base layout for the entire application */
+/* Global styles for the main layout */
 .main-layout {
-  min-height: 100vh; /* Ensures the layout takes up the full viewport height */
+  min-height: 100vh;
   display: flex;
-  flex-direction: column; /* Stacks header and content vertically */
-  padding-bottom: 2rem; /* Adds padding at the bottom of the page */
-  font-family: 'Segoe UI', Arial, sans-serif; /* A clear, modern font */
-  width: 100%; /* Ensures the layout takes full width */
+  flex-direction: column;
+  padding-bottom: 3rem; /* Increased padding at the bottom */
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif; /* Modern font stack */
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll on small screens */
 }
 
-/* Styling for the application header */
+/* Header styling */
 .app-header {
-  background: linear-gradient(to right, #3498DB, #2980B9); /* Gradient background for a more dynamic look */
-  width: 100%; /* Full width header */
-  padding: 1.8rem 2.5rem; /* Increased vertical padding for more prominence */
-  color: white; /* White text for header elements */
-  text-align: left; /* Align title to the left */
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Stronger, more noticeable shadow */
-  border-bottom-left-radius: 25px; /* Slightly larger radius for a smoother curve */
-  border-bottom-right-radius: 25px;
-  display: flex; /* Use flexbox for vertical centering of title */
-  align-items: center; /* Vertically center the title within the header */
+  background: linear-gradient(to right top, #6DD5ED, #2193B0); /* Fresh blue-teal gradient */
+  width: 100%;
+  padding: 2.5rem 2rem; /* More vertical padding */
+  color: white;
+  text-align: center; /* Center align header text */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Softer, wider shadow */
+  border-bottom-left-radius: 40px; /* More pronounced curves */
+  border-bottom-right-radius: 40px;
+  position: relative;
+  overflow: hidden; /* Hide overflow for decorative elements */
 }
 
-/* Styling for the main title within the header */
 .header-title {
-  font-size: 2.2rem; /* Even larger and clearer font size */
-  font-weight: 700; /* Bold font weight */
-  margin: 0; /* Removes default margin to prevent layout shifts */
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.2); /* Subtle text shadow for depth */
+  font-size: 2.8rem; /* Larger, bolder title */
+  font-weight: 800; /* Extra bold */
+  margin: 0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.05em; /* Slightly spaced out letters */
+  position: relative;
+  z-index: 2; /* Ensure text is above any decorative elements */
 }
 
-/* Wrapper for the content cards to manage their layout */
+.header-tagline {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 2;
+}
+
+/* Decorative background elements for header */
+.app-header::before,
+.app-header::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.1); /* Subtle white overlay for texture */
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: blur(10px);
+  z-index: 1;
+}
+
+.app-header::before {
+  width: 150px;
+  height: 150px;
+  top: -50px;
+  left: -50px;
+}
+
+.app-header::after {
+  width: 200px;
+  height: 200px;
+  bottom: -80px;
+  right: -80px;
+}
+
+/* Content wrapper for cards */
 .content-wrapper {
   display: flex;
-  flex-direction: column; /* Cards stacked vertically */
-  gap: 1.8rem; /* Increased space between cards */
+  flex-direction: column;
+  gap: 2.5rem; /* More space between cards */
   width: 100%;
-  max-width: 650px; /* Slightly wider max-width for content cards */
-  margin: 2.5rem auto 0 auto; /* Centered horizontally using auto margins */
-  padding: 0 1.5rem; /* Horizontal padding for responsiveness */
-  position: relative; /* For positioning loading indicator */
+  max-width: 720px; /* Increased max-width for content */
+  margin: -50px auto 0 auto; /* Pull cards slightly over the header curve */
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 10; /* Ensure content is above background */
 }
 
-/* Common styling for all content cards */
+/* Common card styling */
 .card {
-  background-color: white; /* Clean white background */
-  border-radius: 12px; /* Nicely rounded corners */
-  padding: 2rem; /* Generous padding inside cards */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12); /* Softer, slightly larger shadow */
-  border: 1px solid #E0E0E0; /* Subtle light gray border */
-  width: 100%; /* Ensure card takes full width of its parent (content-wrapper) */
+  background-color: white;
+  border-radius: 18px; /* More rounded cards */
+  padding: 2.5rem; /* More generous padding */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Deeper, softer shadow */
+  border: none; /* Remove subtle border */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Styling for titles within cards */
+.card:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
 .card-title {
-  font-size: 1.4rem; /* Prominent card title font size */
-  font-weight: 600; /* Semi-bold */
-  color: #2C3E50; /* Darker blue-grey for text */
-  margin-bottom: 1.2rem; /* Space below card titles */
-  text-align: left; /* Align card titles to the left */
+  font-size: 1.6rem; /* Larger card titles */
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 1.8rem; /* More space below title */
+  text-align: center; /* Center card titles */
 }
 
-/* User ID display - Removed as per user request */
-/* .user-id-display {
-  font-size: 0.85rem;
-  color: #555;
-  text-align: center;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
-  word-break: break-all;
-  padding: 0 1rem;
-} */
-
-
-/* Styling for the task input form */
+/* Form styling */
 .form {
   display: flex;
-  flex-direction: column; /* Stack form elements vertically */
-  gap: 1rem; /* Space between form elements */
+  flex-direction: column;
+  gap: 1.2rem; /* More space between form elements */
 }
 
-/* Styling for input fields */
-.input {
-  padding: 0.9rem 1.2rem; /* Larger padding for inputs */
-  font-size: 1.05rem; /* Slightly larger font size for input text */
-  border: 1px solid #BDC3C7; /* Soft gray border */
-  border-radius: 8px; /* Moderately rounded corners */
-  outline: none; /* Removes default focus outline */
-  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions for focus effects */
-}
-
-.input:focus {
-  border-color: #3498DB; /* Blue border on focus */
-  box-shadow: 0 0 8px rgba(52, 152, 219, 0.4); /* Gentle blue shadow on focus */
-}
-
-/* Styling for the Add Task button */
-.btn-add {
-  background-color: #3498DB; /* Primary blue color */
-  color: white; /* White text */
-  border: none; /* No border */
-  padding: 1rem 0; /* Spacious padding for the button */
-  font-size: 1.15rem; /* Larger font size for button text */
-  border-radius: 8px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover and click effects */
-  font-weight: 600; /* Semi-bold text */
-  letter-spacing: 0.5px; /* Slightly increased letter spacing */
-}
-
-.btn-add:hover {
-  background-color: #2980B9; /* Darker blue on hover */
-  transform: translateY(-2px); /* Slight lift effect on hover */
-}
-.btn-add:active {
-  transform: translateY(0); /* Press down effect on click */
-}
-
-/* Styling for the task list container */
-.task-list {
-  list-style: none; /* Remove default list bullets */
-  margin-top: 0.8rem; /* Space above the task list */
-  padding: 0; /* Remove default padding */
-}
-
-/* Styling for individual task items - ENHANCED */
-.task-item {
-  background-color: #F8F8F8; /* Lighter background for tasks for better contrast */
-  border: 1px solid #E0E0E0; /* Consistent border with cards */
-  border-radius: 10px; /* Slightly more rounded corners for items */
-  padding: 1rem 1.5rem; /* Increased padding inside task items */
-  margin-bottom: 0.8rem; /* Space between task items */
+.input-group {
   display: flex;
-  justify-content: space-between; /* Distribute content and actions */
-  align-items: center; /* Vertically center content */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08); /* More subtle and spread shadow */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions for hover */
-  position: relative; /* For potential future enhancements */
-}
-.task-item:hover {
-  transform: translateY(-3px); /* More pronounced lift on hover */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12); /* Stronger shadow on hover */
+  flex-direction: column;
+  gap: 0.6rem;
 }
 
-/* Left section of the task item (checkbox + content) */
-.task-left {
-  display: flex;
-  align-items: center; /* Vertically align checkbox and text */
-  gap: 1.2rem; /* Increased space between checkbox and text */
-  flex-grow: 1; /* Allows this section to take available space */
+.input-label {
+  font-size: 0.9rem;
+  color: #7F8C8D;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
 }
 
-/* Custom styling for the checkbox */
-.checkbox {
-  width: 22px; /* Slightly larger checkbox */
-  height: 22px;
-  cursor: pointer; /* Pointer cursor */
-  accent-color: #3498DB; /* Custom blue color when checked */
-  border: 2px solid #A0A0A0; /* Darker grey border for better visibility */
-  border-radius: 5px; /* Slightly more rounded checkbox */
-  transition: border-color 0.2s ease;
-  min-width: 22px; /* Ensure checkbox doesn't shrink */
-  min-height: 22px;
+.input-field {
+  padding: 1rem 1.2rem; /* Larger padding for inputs */
+  font-size: 1.05rem;
+  border: 2px solid #E0E0E0; /* Softer border */
+  border-radius: 10px; /* More rounded */
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
 }
-.checkbox:checked {
+
+.input-field:focus {
   border-color: #3498DB;
+  box-shadow: 0 0 12px rgba(52, 152, 219, 0.2); /* Enhanced shadow on focus */
 }
 
-/* Container for task title and deadline */
-.task-content {
-  flex-grow: 1; /* Allows content to take remaining space */
+.date-input {
+  /* Specific styles for date input if needed */
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #3498DB, #2980B9); /* Gradient for primary button */
+  color: white;
+  border: none;
+  padding: 1.1rem 0; /* More padding */
+  font-size: 1.15rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem; /* Space between text and icon */
+}
+
+.btn-primary i {
+  font-size: 1.2em;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #2980B9, #3498DB); /* Reverse gradient on hover */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Task list styling */
+.task-list {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 0;
+}
+
+.task-item {
+  background-color: #FDFDFD; /* Very subtle background for task items */
+  border: 1px solid #EAEAEA; /* Very light border */
+  border-radius: 12px; /* Consistent rounded corners */
+  padding: 1.2rem 1.8rem; /* Generous padding */
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow for items */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.task-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  background-color: #F8FCFE; /* Slightly lighter on hover */
+}
+
+.task-details {
+  display: flex;
+  align-items: flex-start; /* Align content to the top of task item */
+  gap: 1.2rem;
+  flex-grow: 1;
+}
+
+.task-checkbox {
+  width: 24px; /* Larger checkbox */
+  height: 24px;
+  cursor: pointer;
+  accent-color: #3498DB;
+  border: 2px solid #BDC3C7;
+  border-radius: 6px; /* Slightly more square/modern checkbox */
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  min-width: 24px; /* Prevent shrinking */
+  min-height: 24px;
+}
+
+.task-checkbox:checked {
+  border-color: #3498DB;
+  background-color: #3498DB; /* Solid background when checked */
+}
+
+.task-content-display {
+  flex-grow: 1;
   display: flex;
   flex-direction: column; /* Stack title and deadline vertically */
-  gap: 0.3rem; /* Slightly increased space between title and deadline */
+  gap: 0.3rem; /* Small gap between title and deadline */
 }
 
-/* Styling for the task title */
-.task-title {
-  margin: 0; /* Removes default margin */
-  font-weight: 600; /* Bolder font weight for title */
-  font-size: 1.1rem; /* Slightly larger font size for task title */
-  color: #2C3E50; /* Darker, more prominent text color */
+.task-title-main {
+  font-weight: 600; /* Bolder title */
+  font-size: 1.15rem; /* Larger font */
+  color: #333333;
+  line-height: 1.4; /* Better readability */
 }
 
-/* Styling for done tasks */
-.task-title.done {
-  text-decoration: line-through; /* Strikethrough effect */
-  color: #95A5A6; /* Faded color for done tasks */
-  font-style: italic; /* Italic text for done tasks */
+.task-title-done {
+  text-decoration: line-through;
+  color: #95A5A6;
+  font-style: normal; /* No italic for done tasks */
+  opacity: 0.8;
 }
 
-/* Styling for the task deadline */
-.task-deadline {
-  margin: 0; /* Removes default margin */
-  font-size: 0.88rem; /* Slightly larger font size for deadline */
-  color: #7F8C8D; /* Muted gray for deadline */
-  display: flex; /* Use flexbox to align icon and text */
-  align-items: center; /* Vertically center icon and text */
-  gap: 0.5rem; /* Increased space between icon and text */
-}
-
-/* Style for the calendar icon */
-.task-deadline .task-icon { /* Specific class for icon in deadline */
-  font-size: 0.9em; /* Make icon slightly larger */
-  color: #7F8C8D; /* Match icon color to muted text */
-}
-
-
-/* Container for action buttons */
-.task-actions {
+.task-deadline-info {
+  font-size: 0.88rem;
+  color: #7F8C8D;
   display: flex;
-  flex-direction: row; /* Buttons in a row */
-  gap: 0.6rem; /* Increased space between buttons */
+  align-items: center;
+  gap: 0.5rem;
 }
 
-/* Common styling for action buttons (edit, delete, save, cancel) */
-.btn-action {
-  background: none; /* No background */
-  border: none; /* No border */
-  cursor: pointer; /* Pointer cursor */
-  font-size: 1.25rem; /* Larger icon size */
-  color: #7F8C8D; /* Muted gray for icons */
-  padding: 0.5rem; /* Increased padding around icons for larger click area */
-  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
-  border-radius: 5px; /* Gently rounded */
+.task-deadline-info .task-icon {
+  font-size: 0.9em;
+  color: #7F8C8D;
 }
 
-.btn-action:hover {
+.task-actions-group {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem; /* More space between action buttons */
+  margin-left: 1rem; /* Push actions slightly from content */
+}
+
+.btn-icon {
+  background: #F0F0F0; /* Light gray background for icons */
+  border: none;
+  cursor: pointer;
+  font-size: 1rem; /* Consistent icon size */
+  color: #7F8C8D;
+  padding: 0.8rem; /* Larger touch/click area */
+  border-radius: 8px; /* Rounded icon buttons */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: #E5E5E5;
   color: #3498DB; /* Blue on hover */
-  background-color: rgba(52, 152, 219, 0.1); /* Light blue background on hover */
+  transform: translateY(-2px);
 }
-.btn-action:active {
-  transform: translateY(1px); /* Slight press effect on click */
+.btn-icon:active {
+  transform: translateY(0);
 }
 
-/* Styling for edit mode when a task is being edited */
+.btn-edit:hover {
+  background-color: #d1ecf1; /* Light teal for edit hover */
+  color: #1a718f;
+}
+
+.btn-delete:hover {
+  background-color: #f8d7da; /* Light red for delete hover */
+  color: #721c24;
+}
+
+/* Edit mode specific styles */
 .edit-mode {
   display: flex;
-  flex-direction: row; /* Arranges input and buttons horizontally */
-  align-items: center; /* Vertically centers elements */
-  gap: 0.8rem; /* Space between elements */
-  flex-grow: 1; /* Allows edit mode section to take available space */
+  flex-direction: column; /* Stack input and buttons vertically for better flow */
+  gap: 0.8rem;
+  flex-grow: 1;
+  width: 100%; /* Ensure edit mode takes full width */
 }
 
-/* Styling for the edit input field */
-.input-edit {
-  padding: 0.5rem 0.8rem; /* Padding for edit input */
-  font-size: 0.95rem; /* Font size */
-  border: 1px solid #BDC3C7; /* Soft gray border */
-  border-radius: 6px; /* Rounded corners */
-  outline: none; /* Removes default outline */
+.input-edit-task {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #BDC3C7;
+  border-radius: 8px;
+  outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  flex-grow: 1; /* Allows input to expand */
+  width: 100%;
 }
 
-.input-edit:focus {
+.input-edit-task:focus {
   border-color: #3498DB;
-  box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
 }
 
-/* Container for save/cancel buttons in edit mode */
-.edit-buttons {
+.edit-actions {
   display: flex;
-  gap: 0.4rem; /* Space between buttons */
+  gap: 0.6rem;
+  width: 100%;
 }
 
-/* Styling for the Save button in edit mode */
+.btn-save, .btn-cancel {
+  flex-grow: 1; /* Make buttons expand to fill space */
+  padding: 0.8rem 1.2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
 .btn-save {
-  background-color: #2ECC71; /* Green color for save */
-  color: white; /* White text */
-  border-radius: 6px; /* Rounded corners */
-  padding: 0.5rem 1rem; /* Padding */
-  font-size: 0.9rem; /* Font size */
-  font-weight: 600; /* Semi-bold */
-  transition: background-color 0.3s ease;
+  background-color: #2ECC71; /* Green */
+  color: white;
 }
 .btn-save:hover {
-  background-color: #27AE60; /* Darker green on hover */
+  background-color: #27AE60;
+  transform: translateY(-2px);
 }
 
-/* Styling for the Cancel button in edit mode */
 .btn-cancel {
-  background-color: #E74C3C; /* Red color for cancel */
-  color: white; /* White text */
-  border-radius: 6px; /* Rounded corners */
-  padding: 0.5rem 1rem; /* Padding */
-  font-size: 0.9rem; /* Font size */
-  font-weight: 600; /* Semi-bold */
-  transition: background-color 0.3s ease;
+  background-color: #E74C3C; /* Red */
+  color: white;
 }
 .btn-cancel:hover {
-  background-color: #C0392B; /* Darker red on hover */
+  background-color: #C0392B;
+  transform: translateY(-2px);
 }
 
-/* Styling for the "No tasks found" message */
-.no-task {
-  text-align: center; /* Centered text */
-  color: #95A5A6; /* Muted gray color */
-  font-style: italic; /* Italic text */
-  margin-top: 1.5rem; /* Space above */
-  font-size: 0.95rem; /* Clear font size */
+/* Message for no tasks */
+.no-task-message {
+  text-align: center;
+  color: #95A5A6;
+  font-style: italic;
+  margin-top: 2rem;
+  font-size: 1rem;
+  padding: 0 1rem;
 }
 
-/* NEW: Loading overlay and spinner styling */
+/* Loading overlay and spinner styling */
 .loading-overlay {
-  position: fixed; /* Covers the entire viewport */
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay */
+  background-color: rgba(255, 255, 255, 0.9); /* More opaque overlay */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Ensures it's on top of everything */
+  z-index: 9999;
+  backdrop-filter: blur(5px); /* Subtle blur effect */
 }
 
 .spinner {
-  border: 6px solid #f3f3f3; /* Light grey base */
-  border-top: 6px solid #3498db; /* Blue top border */
-  border-radius: 50%; /* Makes it round */
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
   width: 50px;
   height: 50px;
-  animation: spin 1s linear infinite; /* Spin animation */
-  margin-bottom: 15px; /* Space between spinner and text */
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+.loading-text {
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 @keyframes spin {
@@ -603,104 +664,145 @@ export default {
 }
 
 /* Styles for disabled elements when loading */
-/* These styles will apply when isLoading is true */
-.input:disabled,
-.btn-add:disabled,
-.checkbox:disabled,
-.btn-action:disabled,
-.input-edit:disabled,
+.input-field:disabled,
+.btn-primary:disabled,
+.task-checkbox:disabled,
+.btn-icon:disabled,
+.input-edit-task:disabled,
 .btn-save:disabled,
 .btn-cancel:disabled {
   cursor: not-allowed;
-  opacity: 0.5; /* Slightly more opaque when disabled */
-  background-color: #E0E0E0; /* Light grey background for disabled inputs/buttons */
-  box-shadow: none; /* Remove shadow when disabled */
+  opacity: 0.6;
+  filter: grayscale(50%); /* Subtle grayscale effect */
+  background-color: #F0F0F0;
+  box-shadow: none;
+  transform: none; /* Remove hover transform */
 }
 
 
-/* Responsive adjustments for smaller screens */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .app-header {
-    padding: 1rem 1.5rem; /* Smaller padding for header */
+    padding: 2rem 1.5rem;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
   }
   .header-title {
-    font-size: 1.7rem; /* Smaller font for header title */
+    font-size: 2.2rem;
+  }
+  .header-tagline {
+    font-size: 1rem;
   }
   .content-wrapper {
-    padding: 0 1rem; /* Smaller horizontal padding for content */
-    margin-top: 2rem; /* Smaller top margin */
+    margin-top: -30px;
+    padding: 0 1rem;
+    gap: 2rem;
   }
   .card {
-    padding: 1.5rem; /* Smaller padding inside cards */
+    padding: 1.8rem;
+    border-radius: 15px;
   }
   .card-title {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
   }
-  .input, .btn-add {
-    font-size: 1rem; /* Smaller font for inputs and add button */
-    padding: 0.8rem 1rem; /* Smaller padding for inputs and add button */
+  .input-field, .btn-primary {
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
   }
   .task-item {
-    padding: 0.8rem 1rem; /* Smaller padding for task items */
+    padding: 1rem 1.2rem;
+    flex-direction: column; /* Stack content and actions vertically */
+    align-items: flex-start;
+    gap: 1rem;
   }
-  .task-title, .task-deadline {
-    font-size: 0.9rem; /* Smaller font for task title and deadline */
+  .task-details {
+    width: 100%;
   }
-  .btn-action {
-    font-size: 1rem; /* Smaller font for edit/delete icons */
-    padding: 0.3rem;
+  .task-actions-group {
+    width: 100%;
+    justify-content: flex-end; /* Align actions to the right */
+    margin-left: 0;
+  }
+  .task-checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+  }
+  .task-title-main {
+    font-size: 1.05rem;
+  }
+  .task-deadline-info {
+    font-size: 0.8rem;
+  }
+  .btn-icon {
+    font-size: 0.95rem;
+    padding: 0.6rem;
   }
   .edit-mode {
-    flex-direction: column; /* Stack input and buttons vertically in edit mode */
+    flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  .input-edit {
-    width: 100%; /* Full width for edit input */
-  }
-  .edit-buttons {
+  .input-edit-task, .edit-actions {
     width: 100%;
-    justify-content: stretch; /* Stretch buttons to full width */
   }
   .btn-save, .btn-cancel {
-    flex-grow: 1; /* Allow save/cancel buttons to grow */
+    font-size: 0.85rem;
+    padding: 0.7rem 1rem;
   }
 }
 
 @media (max-width: 480px) {
+  .app-header {
+    padding: 1.5rem 1rem;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+  }
   .header-title {
-    font-size: 1.4rem;
+    font-size: 1.8rem;
+  }
+  .header-tagline {
+    font-size: 0.9rem;
   }
   .content-wrapper {
+    margin-top: -20px;
     padding: 0 0.8rem;
+    gap: 1.8rem;
   }
   .card {
-    padding: 1.2rem;
+    padding: 1.5rem;
+    border-radius: 12px;
   }
   .card-title {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
   }
-  .input, .btn-add {
-    font-size: 0.9rem;
-    padding: 0.7rem 0.9rem;
+  .input-field {
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+  }
+  .btn-primary {
+    padding: 0.9rem 0;
+    font-size: 1rem;
   }
   .task-item {
-    flex-direction: column; /* Stack content and actions vertically */
-    align-items: flex-start;
+    padding: 0.8rem 1rem;
     gap: 0.8rem;
   }
-  .task-left {
-    width: 100%;
+  .task-details {
+    gap: 0.8rem;
   }
-  .task-actions {
-    width: 100%;
-    justify-content: flex-end; /* Align action buttons to the right */
+  .task-title-main {
+    font-size: 1rem;
   }
-  .display-mode {
-    flex-direction: column; /* Stack title and deadline vertically */
-    align-items: flex-start;
-    gap: 0.2rem;
+  .task-deadline-info {
+    font-size: 0.75rem;
+  }
+  .btn-icon {
+    font-size: 0.9rem;
+    padding: 0.5rem;
   }
 }
 </style>
