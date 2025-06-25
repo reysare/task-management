@@ -436,7 +436,7 @@ export default {
 /* Root variables for soft blue theme */
 :root {
   --primary-gradient:  #5582ff;
-  --secondary-gradient: #7c9bf0;
+  --secondary-gradient: #0331b1;
   --success-gradient: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
   --danger-gradient: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
   --glass-bg: rgba(255, 255, 255, 0.12);
