@@ -464,21 +464,16 @@ export default {
 }
 /* Refined glassmorphism header */
 .app-header {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9),
-    rgba(240, 248, 255, 0.8)
-  ); /* Softer gradient background */
-  backdrop-filter: blur(20px) saturate(150%); /* Increased blur and saturation */
-  border: 1px solid rgba(227, 242, 253, 0.7); /* Slightly stronger border */
-  border-radius: 20px; /* More rounded corners */
-  margin: 24px auto 0; /* Increased top margin for spacing */
-  max-width: 800px; /* Slightly wider header */
-  padding: 2rem 2.5rem; /* Increased padding */
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(227, 242, 253, 0.5);
+  /* Modified styles */
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  margin: 0; /* Full width */
+  padding: 1rem; /* Smaller height */
   position: relative;
   z-index: 10;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow */
-  overflow: hidden; /* Hide overflow from decorations */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .header-content {
@@ -486,41 +481,29 @@ export default {
   color: var(--text-primary);
   position: relative;
   z-index: 2;
-  display: flex; /* Use flexbox for alignment */
-  flex-direction: column; /* Stack items vertically */
-  align-items: center; /* Center horizontally */
 }
 
 .logo-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem; /* Increased gap */
-  margin-bottom: 0.6rem; /* Increased margin */
-}
-
-.logo-icon {
-  font-size: 2.5rem; /* Larger icon */
-  color: #64b5f6; /* Blue color for the icon */
-  text-shadow: 0 2px 8px rgba(100, 181, 246, 0.4); /* Soft shadow for icon */
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .header-title {
-  font-size: 2.5rem; /* Larger title */
-  font-weight: 700; /* Bolder title */
+  font-size: 2rem;
+  font-weight: 600;
   margin: 0;
-  color: #222; /* Darker text for prominence */
-  letter-spacing: -0.03em; /* Tighter letter spacing */
+  color: #333;
 }
 
 .header-tagline {
-  font-size: 1rem; /* Slightly larger tagline */
-  opacity: 0.85; /* Slightly less opaque */
+  font-size: 0.9rem;
+  opacity: 0.75;
   margin: 0;
   font-weight: 400;
-  color: #555; /* Darker text for clarity */
-  max-width: 70%; /* Limit width for better readability */
-  line-height: 1.5;
+  color: #666;
 }
 
 .header-decoration {
