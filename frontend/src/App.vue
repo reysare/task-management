@@ -63,16 +63,27 @@
                     :disabled="isLoading"
                   />
                   <div class="edit-actions">
-                    <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">
+                    <button
+                      @click="updateTask(task)"
+                      class="btn-save"
+                      :disabled="isLoading"
+                    >
                       Simpan
                     </button>
-                    <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">
+                    <button
+                      @click="cancelEdit"
+                      class="btn-cancel"
+                      :disabled="isLoading"
+                    >
                       Batal
                     </button>
                   </div>
                 </div>
                 <div v-else class="display-mode">
-                  <span :class="{ 'task-title-done': task.is_done }" class="task-title-main">
+                  <span
+                    :class="{ 'task-title-done': task.is_done }"
+                    class="task-title-main"
+                  >
                     {{ task.title }}
                   </span>
                   <span class="task-deadline-info">
@@ -103,14 +114,24 @@
             </div>
           </li>
         </ul>
-        <p v-else class="no-task-message">Belum ada tugas. Yuk, tambahkan yang baru! 🎉</p>
+        <p v-else class="no-task-message">
+          Belum ada tugas. Yuk, tambahkan yang baru! 🎉
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 export default {
   data() {
@@ -126,7 +147,7 @@ export default {
   },
   watch: {
     // Watch for changes in $userId (which becomes available after authentication)
-    '$userId': {
+    $userId: {
       handler(newUserId) {
         if (newUserId) {
           this.fetchTasksRealtime();
@@ -138,8 +159,8 @@ export default {
           this.tasks = [];
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   beforeUnmount() {
     if (this.unsubscribe) {
@@ -155,48 +176,65 @@ export default {
 
       this.isLoading = true;
 
-      const tasksCollectionRef = collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`);
+      const tasksCollectionRef = collection(
+        this.$db,
+        `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+      );
       const q = query(tasksCollectionRef);
 
-      this.unsubscribe = onSnapshot(q, (snapshot) => {
-        const fetchedTasks = [];
-        snapshot.forEach((doc) => {
-          fetchedTasks.push({ id: doc.id, ...doc.data() });
-        });
-        this.tasks = fetchedTasks.sort((a, b) => {
-          // Sort by is_done (false first), then by deadline (ascending), then by created_at (descending)
-          if (a.is_done !== b.is_done) {
-            return a.is_done ? 1 : -1; // Done tasks last
-          }
-          if (a.deadline && b.deadline) {
-            return new Date(a.deadline) - new Date(b.deadline);
-          }
-          if (a.created_at && b.created_at) {
+      this.unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const fetchedTasks = [];
+          snapshot.forEach((doc) => {
+            fetchedTasks.push({ id: doc.id, ...doc.data() });
+          });
+          this.tasks = fetchedTasks.sort((a, b) => {
+            // Sort by is_done (false first), then by deadline (ascending), then by created_at (descending)
+            if (a.is_done !== b.is_done) {
+              return a.is_done ? 1 : -1; // Done tasks last
+            }
+            if (a.deadline && b.deadline) {
+              return new Date(a.deadline) - new Date(b.deadline);
+            }
+            if (a.created_at && b.created_at) {
               // Assuming created_at is a Firebase Timestamp
-              const dateA = a.created_at.toDate ? a.created_at.toDate() : new Date(a.created_at);
-              const dateB = b.created_at.toDate ? b.created_at.toDate() : new Date(b.created_at);
+              const dateA = a.created_at.toDate
+                ? a.created_at.toDate()
+                : new Date(a.created_at);
+              const dateB = b.created_at.toDate
+                ? b.created_at.toDate()
+                : new Date(b.created_at);
               return dateB - dateA; // Newest first
-          }
-          return 0;
-        });
-        this.isLoading = false;
-        console.log("Tugas diambil secara real-time:", this.tasks);
-      }, (error) => {
-        console.error("Error saat mengambil tugas real-time:", error);
-        this.isLoading = false;
-      });
+            }
+            return 0;
+          });
+          this.isLoading = false;
+          console.log("Tugas diambil secara real-time:", this.tasks);
+        },
+        (error) => {
+          console.error("Error saat mengambil tugas real-time:", error);
+          this.isLoading = false;
+        }
+      );
     },
 
     async addTask() {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
       try {
-        await addDoc(collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`), {
-          title: this.newTask,
-          deadline: this.newDeadline,
-          is_done: false,
-          created_at: new Date(), // Add a timestamp for potential ordering/sorting
-        });
+        await addDoc(
+          collection(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+          ),
+          {
+            title: this.newTask,
+            deadline: this.newDeadline,
+            is_done: false,
+            created_at: new Date(), // Add a timestamp for potential ordering/sorting
+          }
+        );
         this.newTask = "";
         this.newDeadline = "";
         console.log("Tugas ditambahkan ke Firestore.");
@@ -209,7 +247,13 @@ export default {
       if (!id) return; // Ensure ID exists
 
       try {
-        await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
+        await deleteDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            id
+          )
+        );
         console.log(`Tugas dengan ID ${id} dihapus.`);
       } catch (err) {
         console.error("Gagal menghapus tugas:", err);
@@ -220,9 +264,16 @@ export default {
       if (!task || !task.id) return;
 
       try {
-        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          is_done: !task.is_done, // Toggle the 'is_done' status
-        });
+        await updateDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            task.id
+          ),
+          {
+            is_done: !task.is_done, // Toggle the 'is_done' status
+          }
+        );
         console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
@@ -243,9 +294,16 @@ export default {
       if (!this.editedTaskTitle.trim() || !task || !task.id) return;
 
       try {
-        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          title: this.editedTaskTitle, // Update only the title
-        });
+        await updateDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            task.id
+          ),
+          {
+            title: this.editedTaskTitle, // Update only the title
+          }
+        );
         this.editingTaskId = null;
         this.editedTaskTitle = "";
         console.log(`Tugas dengan ID ${task.id} diperbarui.`);
@@ -264,32 +322,52 @@ export default {
   display: flex;
   flex-direction: column;
   padding-bottom: 3rem;
-  font-family: 'Inter', 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+  font-family: "Inter", "SF Pro Display", "Segoe UI", Arial, sans-serif;
   width: 100%;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+  background: linear-gradient(
+    135deg,
+    #667eea 50%,
+    #4facfe 25%
+  );
   background-size: 400% 400%;
   animation: gradientFlow 15s ease infinite;
   position: relative;
 }
 
 @keyframes gradientFlow {
-  0%, 100% { background-position: 0% 50%; }
-  25% { background-position: 100% 50%; }
-  50% { background-position: 50% 100%; }
-  75% { background-position: 50% 0%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 50% 100%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
 }
 
 .main-layout::before {
-  content: '';
+  content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
-    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+  background: radial-gradient(
+      circle at 25% 25%,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 50%
+    ),
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 1;
@@ -297,49 +375,60 @@ export default {
 
 /* Header styling */
 .app-header {
-  background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.1)
+  );
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   width: 100%;
   padding: 4rem 2rem 5rem 2rem;
   color: white;
   text-align: center;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-bottom-left-radius: 3rem;
-  border-bottom-right-radius: 3rem;
+  /* border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem; */
   position: relative;
   overflow: hidden;
-  z-index: 2;
+  z-index: 1;
 }
 
 .app-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
   animation: headerShine 4s ease-in-out infinite;
   z-index: 1;
 }
 
 @keyframes headerShine {
-  0%, 100% { transform: translateX(-100%) skewX(-15deg); }
-  50% { transform: translateX(100%) skewX(-15deg); }
+  0%,
+  100% {
+    transform: translateX(-100%) skewX(-15deg);
+  }
+  50% {
+    transform: translateX(100%) skewX(-15deg);
+  }
 }
 
 .header-title {
-  font-size: 3.5rem;
+  font-size: 3rem;
   font-weight: 900;
   margin: 0;
-  text-shadow: 
-    0 0 20px rgba(255,255,255,0.5),
-    0 0 40px rgba(255,255,255,0.3),
-    0 0 60px rgba(255,255,255,0.1);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.1);
   letter-spacing: 0.05em;
   position: relative;
   z-index: 2;
@@ -351,18 +440,23 @@ export default {
 }
 
 @keyframes titleGlow {
-  0% { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-  100% { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 60px rgba(255,255,255,0.4); }
+  0% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.8),
+      0 0 60px rgba(255, 255, 255, 0.4);
+  }
 }
 
 .header-tagline {
-  font-size: 1.2rem;
+  font-size: 1rem;
   margin-top: 1rem;
   opacity: 0.9;
   position: relative;
   z-index: 2;
   font-weight: 500;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Content wrapper for cards */
@@ -383,12 +477,10 @@ export default {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border-radius: 32px;
+  border-radius: 5px;
   padding: 3rem;
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
@@ -396,27 +488,35 @@ export default {
 }
 
 .card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.6), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(102, 126, 234, 0.6),
+    transparent
+  );
   animation: cardTopGlow 3s ease-in-out infinite;
 }
 
 @keyframes cardTopGlow {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .card:hover {
   transform: translateY(-12px);
-  box-shadow: 
-    0 35px 70px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 0 35px 70px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .card-title {
@@ -429,11 +529,11 @@ export default {
   margin-bottom: 2.5rem;
   text-align: center;
   position: relative;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-title::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -15px;
   left: 50%;
@@ -441,7 +541,7 @@ export default {
   width: 80px;
   height: 4px;
   background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-  border-radius: 2px;
+  border-radius: 1px;
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
@@ -465,7 +565,7 @@ export default {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #667eea, #603c83);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -486,8 +586,7 @@ export default {
 
 .input-field:focus {
   border-color: rgba(102, 126, 234, 0.6);
-  box-shadow: 
-    0 0 30px rgba(102, 126, 234, 0.2),
+  box-shadow: 0 0 30px rgba(102, 126, 234, 0.2),
     inset 0 2px 4px rgba(0, 0, 0, 0.05);
   background: rgba(255, 255, 255, 0.95);
   transform: translateY(-3px);
@@ -499,7 +598,7 @@ export default {
   border: none;
   padding: 1.5rem 0;
   font-size: 1.3rem;
-  border-radius: 20px;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.4s ease;
   font-weight: 700;
@@ -515,13 +614,18 @@ export default {
 }
 
 .btn-primary::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: left 0.6s ease;
 }
 
@@ -546,17 +650,20 @@ export default {
 }
 
 .task-item {
-  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.85)
+  );
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
   padding: 2rem 2.5rem;
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.08),
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
@@ -564,7 +671,7 @@ export default {
 }
 
 .task-item::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -582,10 +689,13 @@ export default {
 
 .task-item:hover {
   transform: translateY(-6px) translateX(12px);
-  box-shadow: 
-    0 20px 50px rgba(0, 0, 0, 0.12),
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,255,255,0.9));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(255, 255, 255, 0.9)
+  );
 }
 
 .task-details {
@@ -600,7 +710,7 @@ export default {
   height: 32px;
   cursor: pointer;
   border: 3px solid rgba(102, 126, 234, 0.3);
-  border-radius: 12px;
+  border-radius: 3px;
   transition: all 0.4s ease;
   min-width: 32px;
   min-height: 32px;
@@ -619,7 +729,7 @@ export default {
 }
 
 .task-checkbox:checked::after {
-  content: '✓';
+  content: "✓";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -627,7 +737,7 @@ export default {
   color: white;
   font-weight: 900;
   font-size: 18px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .task-content-display {
@@ -693,13 +803,13 @@ export default {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  width: 48px;
-  height: 48px;
+  width: 30px;
+  height: 30px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 .btn-icon::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -722,7 +832,7 @@ export default {
 }
 
 .btn-edit::after {
-  content: '✏️';
+  content: "✏️";
   font-size: 1.2rem;
   position: absolute;
   top: 50%;
@@ -757,7 +867,7 @@ export default {
 }
 
 .btn-delete::after {
-  content: '🗑️';
+  content: "🗑️";
   font-size: 1.2rem;
   position: absolute;
   top: 50%;
@@ -799,7 +909,7 @@ export default {
   padding: 1.2rem 1.5rem;
   font-size: 1.1rem;
   border: 2px solid rgba(102, 126, 234, 0.3);
-  border-radius: 16px;
+  border-radius: 2px;
   outline: none;
   transition: all 0.4s ease;
   width: 100%;
@@ -810,8 +920,7 @@ export default {
 
 .input-edit-task:focus {
   border-color: #667eea;
-  box-shadow: 
-    0 0 20px rgba(102, 126, 234, 0.3),
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3),
     inset 0 2px 4px rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
 }
@@ -822,12 +931,13 @@ export default {
   width: 100%;
 }
 
-.btn-save, .btn-cancel {
+.btn-save,
+.btn-cancel {
   flex-grow: 1;
   padding: 1rem 1.5rem;
   font-size: 1.1rem;
   font-weight: 700;
-  border-radius: 16px;
+  border-radius: 2px;
   border: none;
   cursor: pointer;
   transition: all 0.4s ease;
@@ -867,7 +977,11 @@ export default {
   margin-top: 3rem;
   font-size: 1.2rem;
   padding: 3rem;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.05)
+  );
   border-radius: 24px;
   border: 2px dashed rgba(160, 174, 192, 0.3);
   backdrop-filter: blur(10px);
@@ -913,8 +1027,12 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Styles for disabled elements when loading */
@@ -958,7 +1076,8 @@ export default {
     font-size: 1.8rem;
     margin-bottom: 2rem;
   }
-  .input-field, .btn-primary {
+  .input-field,
+  .btn-primary {
     padding: 1.3rem 1.8rem;
     font-size: 1.1rem;
   }
