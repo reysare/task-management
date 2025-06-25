@@ -713,9 +713,20 @@ export default {
   color: transparent;
 }
 
+.floating-label {
+  position: absolute;
+  left: 0.9rem;
+  top: 0.9rem; /* Initial position when input is empty and not focused */
+  font-size: 0.85rem;
+  color: #666;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  font-weight: 500;
+}
+
 .input-field:focus + .floating-label,
 .input-field:not(:placeholder-shown) + .floating-label {
-  top: 0.25rem;
+  top: 0.25rem; /* Position when input is focused or has content */
   font-size: 0.7rem;
   color: #666;
 }
@@ -880,7 +891,7 @@ export default {
 .checkbox-input:checked + .checkbox-label {
   background: #81c784; /* Greenish when checked */
   border-color: transparent;
-  box-shadow: 0 3px 12px rgba(102, 187, 106, 0.25);
+  box-shadow: 0 3px 12px rgba(102, 187, 106, 0.932);
 }
 
 .checkbox-input:checked + .checkbox-label .checkbox-icon {
@@ -1012,7 +1023,7 @@ export default {
 
 .btn-save:hover {
   transform: translateY(-1px);
-  box-shadow: 0 3px 12px rgba(102, 187, 106, 0.25);
+  box-shadow: 0 3px 12px rgba(102, 187, 106, 0.904);
 }
 
 .btn-cancel {
