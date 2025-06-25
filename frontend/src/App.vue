@@ -75,9 +75,7 @@
                 :disabled="isLoading"
                 id="deadlineInput"
               />
-              <label for="deadlineInput" class="floating-label"
-                >Deadline</label
-              >
+              <label for="deadlineInput" class="floating-label">Deadline</label>
               <div class="input-highlight"></div>
             </div>
           </div>
@@ -626,7 +624,7 @@ export default {
 /* Content wrapper */
 .content-wrapper {
   max-width: 780px;
-  margin: -16px auto 0;
+  margin: 3rem auto 0; /* Increased margin-top to create space */
   padding: 0 16px 2.5rem;
   position: relative;
   z-index: 10;
