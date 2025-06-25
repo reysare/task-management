@@ -433,760 +433,259 @@ export default {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-/* Root variables for a refined, darker soft blue theme */
 :root {
-    --primary-color: #5582ff; /* A vibrant blue for primary actions */
-    --secondary-color: #0331b1; /* A deeper blue */
-    --accent-color: #8bb7f0; /* A lighter blue for highlights */
-
-    --glass-bg: rgba(255, 255, 255, 0.15); /* More opaque, but still translucent */
-    --glass-border: rgba(255, 255, 255, 0.2); /* Lighter border for definition */
-
-    --text-primary: #e0e0e0; /* Light gray for main text */
-    --text-secondary: #a0a0a0; /* Slightly darker gray for secondary text */
-    --text-highlight: #ffffff; /* Pure white for elements that need to pop */
-
-    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.2); /* Darker, more noticeable shadow */
-    --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.3); /* Even darker on hover */
-
-    --success-color: #4caf50; /* Green for success states */
-    --danger-color: #f44336; /* Red for danger states */
-
-    --border-radius: 14px;
+  --primary-gradient: #4d6aff;
+  --secondary-gradient: #003399;
+  --success-gradient: linear-gradient(135deg, #6ec6ff 0%, #2196f3 100%);
+  --danger-gradient: linear-gradient(135deg, #ff8a80 0%, #e53935 100%);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(90, 120, 210, 0.25);
+  --text-primary: #1a1a1a;
+  --text-secondary: #555;
+  --shadow-soft: 0 8px 24px rgba(100, 120, 200, 0.12);
+  --shadow-hover: 0 12px 32px rgba(100, 120, 200, 0.18);
+  --border-radius: 14px;
+  --background: linear-gradient(135deg, #e7ecff 0%, #cdd8ff 100%);
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Main layout with a darker, more calming animated background */
+body,
+html {
+  font-family: "Inter", sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* Layout */
 .main-layout {
-    min-height: 100vh;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #ffffff 0%, #1a2a3a 100%); /* Darker, more sophisticated gradient */
-    position: relative;
-    overflow-x: hidden;
+  background: var(--background);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Refined floating shapes */
-.animated-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.floating-shapes {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.shape {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.05); /* Lighter, subtle shapes */
-    border-radius: 50%;
-    animation: gentleFloat 25s infinite linear;
-    filter: blur(2px); /* Slightly more blur for a softer effect */
-}
-
-.shape-1 {
-    width: 120px;
-    height: 120px;
-    top: 15%;
-    left: 8%;
-    animation-delay: 0s;
-}
-
-.shape-2 {
-    width: 80px;
-    height: 80px;
-    top: 65%;
-    left: 75%;
-    animation-delay: -8s;
-}
-
-.shape-3 {
-    width: 140px;
-    height: 140px;
-    top: 75%;
-    left: 15%;
-    animation-delay: -12s;
-}
-
-.shape-4 {
-    width: 60px;
-    height: 60px;
-    top: 35%;
-    left: 68%;
-    animation-delay: -18s;
-}
-
-.shape-5 {
-    width: 160px;
-    height: 160px;
-    top: 5%;
-    left: 55%;
-    animation-delay: -6s;
-}
-
-@keyframes gentleFloat {
-    0% {
-        transform: translateY(0px) rotate(0deg);
-        opacity: 0.2;
-    }
-    25% {
-        transform: translateY(-15px) rotate(90deg);
-        opacity: 0.3;
-    }
-    50% {
-        transform: translateY(-30px) rotate(180deg);
-        opacity: 0.15;
-    }
-    75% {
-        transform: translateY(-15px) rotate(270deg);
-        opacity: 0.25;
-    }
-    100% {
-        transform: translateY(0px) rotate(360deg);
-        opacity: 0.2;
-    }
-}
-
-/* Refined glassmorphism header */
+/* Header */
 .app-header {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px); /* Slightly less blur for clarity */
-    border: 1px solid var(--glass-border);
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-    margin: 16px 16px 0 16px;
-    padding: 1.8rem;
-    position: relative;
-    z-index: 10;
-    box-shadow: var(--shadow-soft);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  margin: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
 }
 
 .header-content {
-    text-align: center;
-    color: var(--text-primary);
-    position: relative;
-    z-index: 2;
+  text-align: center;
 }
 
 .logo-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
-    margin-bottom: 0.4rem;
-}
-
-.logo-icon {
-    color: var(--accent-color); /* Add color to the icon */
-    font-size: 2.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .header-title {
-    font-size: 2rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--text-highlight); /* Make title stand out */
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 .header-tagline {
-    font-size: 0.9rem;
-    opacity: 0.85;
-    margin: 0;
-    font-weight: 400;
-    color: var(--text-secondary);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
-/* Header decoration (kept as is, but consider if still needed with new background) */
-.header-decoration {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.deco-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.03); /* Lighter, more subtle deco circles */
-    animation: softPulse 6s ease-in-out infinite;
-}
-
-.deco-1 {
-    width: 80px;
-    height: 80px;
-    top: -40px;
-    right: -25px;
-    animation-delay: 0s;
-}
-
-.deco-2 {
-    width: 50px;
-    height: 50px;
-    bottom: -15px;
-    left: -15px;
-    animation-delay: 2s;
-}
-
-.deco-3 {
-    width: 65px;
-    height: 65px;
-    top: 50%;
-    left: -32px;
-    animation-delay: 4s;
-}
-
-@keyframes softPulse {
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.1;
-    }
-    50% {
-        transform: scale(1.05);
-        opacity: 0.2;
-    }
-}
-
-/* Loading overlay */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
-    backdrop-filter: blur(10px); /* Slightly more blur */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    color: var(--text-highlight);
-}
-
-.modern-spinner {
-    position: relative;
-    width: 60px;
-    height: 60px;
-    margin-bottom: 1.5rem;
-}
-
-.spinner-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 2px solid transparent;
-    border-top: 2px solid var(--accent-color); /* Use accent color for spinner */
-    border-radius: 50%;
-    animation: gentleSpin 1.8s linear infinite;
-}
-
-.spinner-ring:nth-child(2) {
-    width: 75%;
-    height: 75%;
-    top: 12.5%;
-    left: 12.5%;
-    animation-delay: -0.6s;
-}
-
-.spinner-ring:nth-child(3) {
-    width: 50%;
-    height: 50%;
-    top: 25%;
-    left: 25%;
-    animation-delay: -1.2s;
-}
-
-@keyframes gentleSpin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.loading-text {
-    color: var(--text-highlight);
-    font-size: 1rem;
-    font-weight: 400;
-    opacity: 0.9;
-}
-
-/* Content wrapper */
-.content-wrapper {
-    max-width: 780px;
-    margin: -16px auto 0;
-    padding: 0 16px 2.5rem;
-    position: relative;
-    z-index: 10;
-}
-
-/* Refined card styling */
+/* Cards */
 .card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px); /* Consistency in blur */
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius);
-    padding: 1.8rem;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow-soft);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: 0.3s;
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: 1.2rem;
-    position: relative;
-}
-
-.card-icon {
-    color: var(--accent-color); /* Icon color */
-    font-size: 1.5rem;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
 }
 
 .card-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--text-highlight); /* Card title stands out */
-    margin: 0;
-    flex-grow: 1;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.task-counter {
-    background: var(--success-color); /* Solid color for count for clarity */
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 16px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.25); /* Shadow matching success color */
-}
-
-/* Form styling */
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-}
-
-.input-group {
-    display: grid;
-    gap: 0.8rem;
-}
-
-@media (min-width: 768px) {
-    .input-group {
-        grid-template-columns: 2fr 1fr;
-    }
-}
-
-/* Floating input design */
-.floating-input {
-    position: relative;
-}
-
+/* Form */
 .input-field {
-    width: 100%;
-    padding: 1rem 0.9rem 0.7rem;
-    background: rgba(255, 255, 255, 0.08); /* Darker input field background */
-    border: 1.5px solid var(--glass-border);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-.input-field::placeholder {
-    color: transparent;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(124, 155, 240, 0.25);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
 }
 
 .input-field:focus {
-    border-color: var(--accent-color); /* Highlight with accent color */
-    background: rgba(255, 255, 255, 0.15); /* Slightly lighter on focus */
+  border-color: var(--primary-gradient);
+  background: rgba(255, 255, 255, 0.9);
+  outline: none;
 }
 
-.floating-label {
-    position: absolute;
-    left: 0.9rem;
-    top: 0.9rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    transition: all 0.3s ease;
-    pointer-events: none;
-    font-weight: 500;
-}
-
-.input-field:focus + .floating-label,
-.input-field:not(:placeholder-shown) + .floating-label {
-    top: 0.25rem;
-    font-size: 0.7rem;
-    color: var(--accent-color); /* Label color changes to accent on focus/fill */
-}
-
-.input-highlight {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 1.5px;
-    background: var(--primary-color);
-    transition: width 0.3s ease;
-}
-
-.input-field:focus ~ .input-highlight {
-    width: 100%;
-}
-
-/* Refined button */
+/* Button */
 .btn-primary {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); /* Stronger gradient */
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.6rem;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  background: var(--primary-gradient);
+  border: none;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(124, 155, 240, 0.25);
+  transition: 0.3s;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(124, 155, 240, 0.35);
 }
 
-.btn-primary:active {
-    transform: translateY(0);
-}
-
-.btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-    background: linear-gradient(135deg, #77aaff 0%, #4466cc 100%); /* Slightly muted disabled state */
-}
-
-.btn-shimmer {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgb(255, 255, 255), /* Stronger shimmer effect */
-        transparent
-    );
-    transition: left 0.6s ease;
-}
-
-.btn-primary:hover .btn-shimmer {
-    left: 100%;
-}
-
-.btn-text {
-    position: relative;
-    z-index: 2;
-}
-
-.btn-icon {
-    position: relative;
-    z-index: 2;
-    font-size: 1rem;
-}
-
-/* Task grid layout */
-.task-container {
-    margin-top: 0.8rem;
-}
-
-.task-grid {
-    display: grid;
-    gap: 0.8rem;
-}
-
+/* Tasks */
 .task-item {
-    background: rgba(255, 255, 255, 0.08); /* Darker task item background */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 1.2rem;
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(124, 155, 240, 0.15);
+  padding: 1.2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(100, 120, 200, 0.1);
+  transition: 0.3s;
 }
 
 .task-item:hover {
-    transform: translateX(3px);
-    box-shadow: var(--shadow-soft);
-}
-
-.task-completed {
-    opacity: 0.7;
-    transform: scale(0.98);
-}
-
-.task-priority-indicator {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 3px;
-    height: 100%;
-    background: var(--primary-color); /* Retain primary color for indicator */
-    border-radius: 0 1px 1px 0;
-}
-
-.task-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-}
-
-.custom-checkbox {
-    position: relative;
-}
-
-.checkbox-input {
-    display: none;
-}
-
-.checkbox-label {
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: rgba(255, 255, 255, 0.15); /* Slightly darker checkbox background */
-    border: 1.5px solid var(--glass-border);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.checkbox-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    color: white;
-    font-size: 0.7rem;
-    transition: transform 0.2s ease;
-}
-
-.checkbox-input:checked + .checkbox-label {
-    background: var(--success-color); /* Solid success color */
-    border-color: transparent;
-    box-shadow: 0 3px 12px rgb(76, 175, 79);
-}
-
-.checkbox-input:checked + .checkbox-label .checkbox-icon {
-    transform: translate(-50%, -50%) scale(1);
-}
-
-.task-actions {
-    display: flex;
-    gap: 0.4rem;
-}
-
-.action-btn {
-    width: 28px;
-    height: 28px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    font-size: 0.8rem;
-    background: rgba(255, 255, 255, 0.08); /* Darker action button background */
-    color: var(--accent-color); /* Use accent color for icons */
-    position: relative;
-}
-
-.action-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: scale(1.05);
-}
-
-/* Custom edit and delete icons using CSS (colors updated) */
-.edit-btn {
-    color: var(--accent-color);
-}
-
-.delete-btn {
-    background: rgba(244, 67, 54, 0.08); /* Use danger color for delete */
-    color: var(--danger-color);
-}
-
-.delete-btn:hover {
-    background: rgba(244, 67, 54, 0.15);
-}
-
-.task-body {
-    color: var(--text-primary);
+  transform: translateX(2px);
+  box-shadow: var(--shadow-soft);
 }
 
 .task-title {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 0.4rem;
-    transition: all 0.3s ease;
-    color: var(--text-highlight); /* Task title stands out */
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .task-title.completed {
-    text-decoration: line-through;
-    opacity: 0.6;
-    color: var(--text-secondary);
+  text-decoration: line-through;
+  color: var(--text-secondary);
+  opacity: 0.6;
 }
 
-.task-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
+/* Checkbox */
+.custom-checkbox {
+  position: relative;
 }
 
-.deadline-badge {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.08); /* Darker badge background */
-    padding: 0.25rem 0.6rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
+.checkbox-input {
+  display: none;
 }
 
-/* Edit mode styling */
-.edit-mode {
-    margin-top: 0.8rem;
+.checkbox-label {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(124, 155, 240, 0.35);
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.3s;
 }
 
-.edit-input {
-    margin-bottom: 0.8rem;
+.checkbox-input:checked + .checkbox-label {
+  background: var(--success-gradient);
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(100, 181, 246, 0.25);
 }
 
-.edit-actions {
-    display: flex;
-    gap: 0.4rem;
+.checkbox-label::after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 4px;
+  left: 6px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.btn-save,
-.btn-cancel {
-    padding: 0.4rem 0.8rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+.checkbox-input:checked + .checkbox-label::after {
+  opacity: 1;
 }
 
-.btn-save {
-    background: var(--success-color); /* Solid success color */
-    color: white;
-}
-
-.btn-save:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.25);
-}
-
-.btn-cancel {
-    background: rgba(255, 255, 255, 0.08); /* Darker cancel button */
-    color: var(--text-secondary);
-}
-
-.btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-/* Empty state */
+/* Empty State */
 .empty-state {
-    text-align: center;
-    padding: 2.5rem 1rem;
-    color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
-.empty-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.8rem;
-    opacity: 0.7; /* Slightly more opaque */
-    color: var(--accent-color); /* Use accent color for empty state icon */
+/* Spinner */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.empty-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-    color: var(--text-primary);
+.spinner-ring {
+  width: 40px;
+  height: 40px;
+  border: 3px solid transparent;
+  border-top: 3px solid var(--primary-gradient);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
 }
 
-.empty-subtitle {
-    opacity: 0.85;
-    font-size: 0.9rem;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Responsive design */
+/* Responsive */
 @media (max-width: 768px) {
-    .app-header {
-        margin: 8px;
-        padding: 1.2rem;
-    }
+  .app-header {
+    margin: 8px;
+    padding: 1.2rem;
+  }
 
-    .header-title {
-        font-size: 1.7rem;
-    }
+  .header-title {
+    font-size: 1.7rem;
+  }
 
-    .header-tagline {
-        font-size: 0.8rem;
-    }
+  .header-tagline {
+    font-size: 0.8rem;
+  }
 
-    .content-wrapper {
-        padding: 0 8px 2rem;
-    }
-
-    .card {
-        padding: 1.2rem;
-    }
-
-    .input-group {
-        grid-template-columns: 1fr;
-    }
+  .card {
+    padding: 1.2rem;
+  }
 }
 </style>
+
