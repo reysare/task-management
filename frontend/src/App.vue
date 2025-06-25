@@ -905,7 +905,7 @@ export default {
     background: linear-gradient(
         90deg,
         transparent,
-        rgba(255, 255, 255, 0.25), /* Stronger shimmer effect */
+        rgb(255, 255, 255), /* Stronger shimmer effect */
         transparent
     );
     transition: left 0.6s ease;
@@ -1007,7 +1007,7 @@ export default {
 .checkbox-input:checked + .checkbox-label {
     background: var(--success-color); /* Solid success color */
     border-color: transparent;
-    box-shadow: 0 3px 12px rgba(76, 175, 80, 0.25);
+    box-shadow: 0 3px 12px rgb(76, 175, 79);
 }
 
 .checkbox-input:checked + .checkbox-label .checkbox-icon {
