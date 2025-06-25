@@ -6,51 +6,31 @@
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
-        <div class="shape shape-4"></div>
-        <div class="shape shape-5"></div>
       </div>
     </div>
 
-    <!-- Glassmorphism Header -->
+    <!-- Simplified Header -->
     <header class="app-header">
       <div class="header-content">
-        <div class="logo-section">
-          <div class="logo-icon">
-            <i class="fas fa-seedling"></i>
-          </div>
-          <h1 class="header-title">Daily Flow</h1>
-        </div>
-        <p class="header-tagline">
-          Transform your daily routine into a masterpiece
-        </p>
-      </div>
-      <div class="header-decoration">
-        <div class="deco-circle deco-1"></div>
-        <div class="deco-circle deco-2"></div>
-        <div class="deco-circle deco-3"></div>
+        <h1 class="header-title">Daily Flow</h1>
+        <p class="header-tagline">Organize your daily tasks</p>
       </div>
     </header>
 
-    <!-- Loading overlay with modern spinner -->
+    <!-- Loading overlay -->
     <div v-if="isLoading" class="loading-overlay">
       <div class="modern-spinner">
         <div class="spinner-ring"></div>
         <div class="spinner-ring"></div>
         <div class="spinner-ring"></div>
       </div>
-      <p class="loading-text">Synchronizing your universe...</p>
+      <p class="loading-text">Loading your tasks...</p>
     </div>
 
     <!-- Main content area -->
     <div class="content-wrapper">
-      <!-- Futuristic Add Task Card -->
+      <!-- Add Task Card -->
       <div class="card add-task-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="fas fa-magic"></i>
-          </div>
-          <h2 class="card-title">Create New Mission</h2>
-        </div>
         <form @submit.prevent="addTask" class="form">
           <div class="input-group">
             <div class="floating-input">
@@ -62,9 +42,7 @@
                 :disabled="isLoading"
                 id="taskInput"
               />
-              <label for="taskInput" class="floating-label"
-                >What needs to be accomplished?</label
-              >
+              <label for="taskInput" class="floating-label">Task description</label>
               <div class="input-highlight"></div>
             </div>
             <div class="floating-input">
@@ -75,44 +53,22 @@
                 :disabled="isLoading"
                 id="deadlineInput"
               />
-              <label for="deadlineInput" class="floating-label"
-                >Target completion</label
-              >
+              <label for="deadlineInput" class="floating-label">Due date</label>
               <div class="input-highlight"></div>
             </div>
           </div>
           <button type="submit" class="btn-primary" :disabled="isLoading">
-            <span class="btn-text">Launch Mission</span>
-            <div class="btn-icon">
-              <i class="fas fa-rocket"></i>
-            </div>
+            <span class="btn-text">Add Task</span>
             <div class="btn-shimmer"></div>
           </button>
         </form>
       </div>
 
-      <!-- Sleek Task List Card -->
+      <!-- Task List Card -->
       <div class="card task-list-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="fas fa-list-ul"></i>
-          </div>
-          <h2 class="card-title">Mission Control</h2>
-          <div class="task-counter" v-if="tasks.length">
-            {{ tasks.filter((t) => !t.is_done).length }} active
-          </div>
-        </div>
-
         <div class="task-container">
           <div v-if="tasks.length" class="task-grid">
-            <div
-              v-for="task in tasks"
-              :key="task.id"
-              class="task-item"
-              :class="{ 'task-completed': task.is_done }"
-            >
-              <div class="task-priority-indicator"></div>
-
+            <div v-for="task in tasks" :key="task.id" class="task-item" :class="{ 'task-completed': task.is_done }">
               <div class="task-content">
                 <div class="task-header">
                   <div class="custom-checkbox">
@@ -130,28 +86,28 @@
                       </div>
                     </label>
                   </div>
-
+                  
                   <div class="task-actions">
                     <button
                       v-if="editingTaskId !== task.id"
                       @click="startEdit(task)"
                       class="action-btn edit-btn"
-                      title="Edit mission"
+                      title="Edit task"
                       :disabled="isLoading"
                     >
-                      <i class="fas fa-edit"></i>
+                      <i class="fas fa-pencil-alt"></i>
                     </button>
                     <button
                       @click="deleteTask(task.id)"
                       class="action-btn delete-btn"
-                      title="Abort mission"
+                      title="Delete task"
                       :disabled="isLoading"
                     >
-                      <i class="fas fa-times"></i>
+                      <i class="fas fa-trash-alt"></i>
                     </button>
                   </div>
                 </div>
-
+                
                 <div class="task-body">
                   <div v-if="editingTaskId === task.id" class="edit-mode">
                     <div class="floating-input">
@@ -163,57 +119,40 @@
                         placeholder=" "
                         id="editInput"
                       />
-                      <label for="editInput" class="floating-label"
-                        >Mission name</label
-                      >
+                      <label for="editInput" class="floating-label">Edit task</label>
                       <div class="input-highlight"></div>
                     </div>
                     <div class="edit-actions">
-                      <button
-                        @click="updateTask(task)"
-                        class="btn-save"
-                        :disabled="isLoading"
-                      >
-                        <i class="fas fa-save"></i>
+                      <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">
                         <span>Save</span>
                       </button>
-                      <button
-                        @click="cancelEdit"
-                        class="btn-cancel"
-                        :disabled="isLoading"
-                      >
-                        <i class="fas fa-times"></i>
+                      <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">
                         <span>Cancel</span>
                       </button>
                     </div>
                   </div>
-
+                  
                   <div v-else class="display-mode">
-                    <h3 class="task-title" :class="{ completed: task.is_done }">
+                    <h3 class="task-title" :class="{ 'completed': task.is_done }">
                       {{ task.title }}
                     </h3>
                     <div class="task-meta">
                       <div class="deadline-badge">
-                        <i class="far fa-calendar-alt"></i>
                         <span>{{ formatDate(task.deadline) }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <div class="task-glow"></div>
             </div>
           </div>
-
+          
           <div v-else class="empty-state">
             <div class="empty-icon">
-              <i class="fas fa-seedling"></i>
+              <i class="fas fa-tasks"></i>
             </div>
-            <h3 class="empty-title">Ready for your first mission?</h3>
-            <p class="empty-subtitle">
-              Your journey to productivity starts here ✨
-            </p>
+            <h3 class="empty-title">No tasks yet</h3>
+            <p class="empty-subtitle">Add your first task above</p>
           </div>
         </div>
       </div>
@@ -222,15 +161,7 @@
 </template>
 
 <script>
-import {
-  collection,
-  query,
-  onSnapshot,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 export default {
   data() {
@@ -245,7 +176,7 @@ export default {
     };
   },
   watch: {
-    $userId: {
+    '$userId': {
       handler(newUserId) {
         if (newUserId) {
           this.fetchTasksRealtime();
@@ -257,8 +188,8 @@ export default {
           this.tasks = [];
         }
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   beforeUnmount() {
     if (this.unsubscribe) {
@@ -268,74 +199,55 @@ export default {
   methods: {
     fetchTasksRealtime() {
       if (!this.$db || !this.$appId || !this.$userId) {
-        console.warn("Firebase atau ID pengguna belum tersedia.");
+        console.warn("Firebase or user ID not available.");
         return;
       }
 
       this.isLoading = true;
 
-      const tasksCollectionRef = collection(
-        this.$db,
-        `artifacts/${this.$appId}/users/${this.$userId}/tasks`
-      );
+      const tasksCollectionRef = collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`);
       const q = query(tasksCollectionRef);
 
-      this.unsubscribe = onSnapshot(
-        q,
-        (snapshot) => {
-          const fetchedTasks = [];
-          snapshot.forEach((doc) => {
-            fetchedTasks.push({ id: doc.id, ...doc.data() });
-          });
-          this.tasks = fetchedTasks.sort((a, b) => {
-            if (a.is_done !== b.is_done) {
-              return a.is_done ? 1 : -1;
-            }
-            if (a.deadline && b.deadline) {
-              return new Date(a.deadline) - new Date(b.deadline);
-            }
-            if (a.created_at && b.created_at) {
-              const dateA = a.created_at.toDate
-                ? a.created_at.toDate()
-                : new Date(a.created_at);
-              const dateB = b.created_at.toDate
-                ? b.created_at.toDate()
-                : new Date(b.created_at);
+      this.unsubscribe = onSnapshot(q, (snapshot) => {
+        const fetchedTasks = [];
+        snapshot.forEach((doc) => {
+          fetchedTasks.push({ id: doc.id, ...doc.data() });
+        });
+        this.tasks = fetchedTasks.sort((a, b) => {
+          if (a.is_done !== b.is_done) {
+            return a.is_done ? 1 : -1;
+          }
+          if (a.deadline && b.deadline) {
+            return new Date(a.deadline) - new Date(b.deadline);
+          }
+          if (a.created_at && b.created_at) {
+              const dateA = a.created_at.toDate ? a.created_at.toDate() : new Date(a.created_at);
+              const dateB = b.created_at.toDate ? b.created_at.toDate() : new Date(b.created_at);
               return dateB - dateA;
-            }
-            return 0;
-          });
-          this.isLoading = false;
-          console.log("Tugas diambil secara real-time:", this.tasks);
-        },
-        (error) => {
-          console.error("Error saat mengambil tugas real-time:", error);
-          this.isLoading = false;
-        }
-      );
+          }
+          return 0;
+        });
+        this.isLoading = false;
+      }, (error) => {
+        console.error("Error fetching tasks:", error);
+        this.isLoading = false;
+      });
     },
 
     async addTask() {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
       try {
-        await addDoc(
-          collection(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`
-          ),
-          {
-            title: this.newTask,
-            deadline: this.newDeadline,
-            is_done: false,
-            created_at: new Date(),
-          }
-        );
+        await addDoc(collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`), {
+          title: this.newTask,
+          deadline: this.newDeadline,
+          is_done: false,
+          created_at: new Date(),
+        });
         this.newTask = "";
         this.newDeadline = "";
-        console.log("Tugas ditambahkan ke Firestore.");
       } catch (err) {
-        console.error("Gagal menambahkan tugas:", err);
+        console.error("Failed to add task:", err);
       }
     },
 
@@ -343,16 +255,9 @@ export default {
       if (!id) return;
 
       try {
-        await deleteDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            id
-          )
-        );
-        console.log(`Tugas dengan ID ${id} dihapus.`);
+        await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
       } catch (err) {
-        console.error("Gagal menghapus tugas:", err);
+        console.error("Failed to delete task:", err);
       }
     },
 
@@ -360,19 +265,11 @@ export default {
       if (!task || !task.id) return;
 
       try {
-        await updateDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            task.id
-          ),
-          {
-            is_done: !task.is_done,
-          }
-        );
-        console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
+        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
+          is_done: !task.is_done,
+        });
       } catch (err) {
-        console.error("Gagal memperbarui status tugas:", err);
+        console.error("Failed to update task status:", err);
       }
     },
 
@@ -390,64 +287,52 @@ export default {
       if (!this.editedTaskTitle.trim() || !task || !task.id) return;
 
       try {
-        await updateDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            task.id
-          ),
-          {
-            title: this.editedTaskTitle,
-          }
-        );
+        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
+          title: this.editedTaskTitle,
+        });
         this.editingTaskId = null;
         this.editedTaskTitle = "";
-        console.log(`Tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
-        console.error("Gagal memperbarui tugas:", err);
+        console.error("Failed to update task:", err);
       }
     },
 
     formatDate(dateString) {
-      if (!dateString) return "";
+      if (!dateString) return '';
       const date = new Date(dateString);
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-
+      
       if (date.toDateString() === today.toDateString()) {
-        return "Today";
+        return 'Today';
       } else if (date.toDateString() === tomorrow.toDateString()) {
-        return "Tomorrow";
+        return 'Tomorrow';
       } else {
-        return date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       }
-    },
+    }
   },
 };
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
-/* Updated color variables for darker theme */
 :root {
-  --primary-gradient: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
-  --secondary-gradient: linear-gradient(135deg, #6a8cff 0%, #4a6cf7 100%);
-  --success-gradient: linear-gradient(135deg, #3aa8ff 0%, #0077ff 100%);
-  --danger-gradient: linear-gradient(135deg, #ff5e5e 0%, #d23369 100%);
-  --dark-bg: #1a202c;
-  --darker-bg: #171923;
-  --card-bg: rgba(26, 32, 44, 0.8);
-  --card-border: rgba(74, 108, 247, 0.2);
-  --text-primary: #f7fafc;
-  --text-secondary: #cbd5e0;
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
-  --border-radius: 16px;
+  --primary-blue: #4a6cf7;
+  --primary-blue-light: #6a8cff;
+  --primary-blue-dark: #2541b2;
+  --background-dark: #1a2238;
+  --background-light: #f0f4ff;
+  --card-bg: #ffffff;
+  --text-primary: #2d3748;
+  --text-secondary: #4a5568;
+  --text-light: #f8fafc;
+  --border-radius: 12px;
+  --shadow-soft: 0 4px 20px rgba(74, 108, 247, 0.1);
+  --shadow-hover: 0 8px 30px rgba(74, 108, 247, 0.2);
 }
 
 * {
@@ -456,16 +341,15 @@ export default {
   box-sizing: border-box;
 }
 
-/* Darker main layout */
 .main-layout {
   min-height: 100vh;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--dark-bg);
+  font-family: 'Inter', sans-serif;
+  background: var(--background-dark);
+  color: var(--text-primary);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Animated floating shapes - darker version */
 .animated-bg {
   position: fixed;
   top: 0;
@@ -474,6 +358,7 @@ export default {
   height: 100%;
   pointer-events: none;
   z-index: 1;
+  opacity: 0.6;
 }
 
 .floating-shapes {
@@ -484,84 +369,72 @@ export default {
 
 .shape {
   position: absolute;
-  background: rgba(74, 108, 247, 0.08);
+  background: rgba(74, 108, 247, 0.05);
   border-radius: 50%;
-  animation: float 20s infinite linear;
+  animation: float 15s infinite linear;
+}
+
+.shape-1 {
+  width: 100px;
+  height: 100px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 60px;
+  height: 60px;
+  top: 60%;
+  left: 80%;
+  animation-delay: -5s;
+}
+
+.shape-3 {
+  width: 80px;
+  height: 80px;
+  top: 80%;
+  left: 20%;
+  animation-delay: -10s;
 }
 
 @keyframes float {
-  0% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
-  50% { transform: translateY(-20px) rotate(180deg); opacity: 0.2; }
-  100% { transform: translateY(0px) rotate(360deg); opacity: 0.5; }
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+  100% { transform: translateY(0px) rotate(360deg); }
 }
 
-/* Header with dark theme */
 .app-header {
-  background: rgba(23, 25, 35, 0.9);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  margin: 20px 20px 0 20px;
-  padding: 2rem;
-  position: relative;
-  z-index: 10;
-  box-shadow: var(--shadow-soft);
-}
-
-.header-content {
+  background: rgba(26, 34, 56, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(74, 108, 247, 0.2);
+  padding: 1.5rem 2rem;
   text-align: center;
   position: relative;
-  z-index: 2;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.logo-icon {
-  width: 50px;
-  height: 50px;
-  background: var(--primary-gradient);
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: white !important;
-  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
+  z-index: 10;
 }
 
 .header-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-primary);
-  background: linear-gradient(135deg, #f7fafc 0%, #cbd5e0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
 }
 
 .header-tagline {
   font-size: 1rem;
-  opacity: 0.8;
-  margin: 0;
+  color: rgba(248, 250, 252, 0.7);
   font-weight: 400;
-  color: var(--text-secondary);
 }
 
-/* Loading overlay - dark version */
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(26, 32, 44, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(26, 34, 56, 0.9);
+  backdrop-filter: blur(5px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -571,9 +444,9 @@ export default {
 
 .modern-spinner {
   position: relative;
-  width: 80px;
-  height: 80px;
-  margin-bottom: 2rem;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1.5rem;
 }
 
 .spinner-ring {
@@ -581,85 +454,61 @@ export default {
   width: 100%;
   height: 100%;
   border: 3px solid transparent;
-  border-top: 3px solid var(--text-primary);
+  border-top: 3px solid var(--primary-blue-light);
   border-radius: 50%;
   animation: modernSpin 1.5s linear infinite;
 }
 
-.loading-text {
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  font-weight: 400;
-  opacity: 0.9;
+.spinner-ring:nth-child(2) {
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  animation-delay: -0.5s;
 }
 
-/* Content wrapper */
+.spinner-ring:nth-child(3) {
+  width: 60%;
+  height: 60%;
+  top: 20%;
+  left: 20%;
+  animation-delay: -1s;
+}
+
+@keyframes modernSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  color: var(--text-light);
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
 .content-wrapper {
   max-width: 800px;
-  margin: -20px auto 0;
-  padding: 0 20px 3rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
   position: relative;
   z-index: 10;
 }
 
-/* Cards with dark theme */
 .card {
   background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
   border-radius: var(--border-radius);
-  padding: 2rem;
-  margin-bottom: 2rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
   box-shadow: var(--shadow-soft);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  position: relative;
-}
-
-/* Fixed icon visibility */
-.card-icon {
-  width: 40px;
-  height: 40px;
-  background: var(--primary-gradient);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white !important; /* Force white color for icons */
-  font-size: 1.2rem;
-  box-shadow: 0 4px 15px rgba(74, 108, 247, 0.4);
-}
-
-.card-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  flex-grow: 1;
-}
-
-.task-counter {
-  background: var(--success-gradient);
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
-}
-
-/* Form styling - dark version */
 .form {
   display: flex;
   flex-direction: column;
@@ -671,31 +520,32 @@ export default {
   gap: 1rem;
 }
 
-/* Input fields - dark theme */
+@media (min-width: 768px) {
+  .input-group {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
 .floating-input {
   position: relative;
 }
 
 .input-field {
   width: 100%;
-  padding: 1.2rem 1rem 0.8rem;
-  background: rgba(23, 25, 35, 0.7);
-  border: 2px solid rgba(74, 108, 247, 0.3);
-  border-radius: 12px;
+  padding: 1rem;
+  background: var(--background-light);
+  border: 1px solid rgba(74, 108, 247, 0.2);
+  border-radius: var(--border-radius);
   color: var(--text-primary);
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   outline: none;
   transition: all 0.3s ease;
 }
 
-.input-field::placeholder {
-  color: transparent;
-}
-
 .input-field:focus {
-  border-color: rgba(74, 108, 247, 0.7);
-  background: rgba(23, 25, 35, 0.9);
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
 }
 
 .floating-label {
@@ -706,14 +556,16 @@ export default {
   color: var(--text-secondary);
   transition: all 0.3s ease;
   pointer-events: none;
-  font-weight: 500;
+  background: var(--card-bg);
+  padding: 0 0.3rem;
 }
 
 .input-field:focus + .floating-label,
 .input-field:not(:placeholder-shown) + .floating-label {
-  top: 0.3rem;
+  top: -0.6rem;
+  left: 0.8rem;
   font-size: 0.75rem;
-  color: var(--text-primary);
+  color: var(--primary-blue);
 }
 
 .input-highlight {
@@ -722,7 +574,7 @@ export default {
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--primary-gradient);
+  background: var(--primary-blue);
   transition: width 0.3s ease;
 }
 
@@ -730,35 +582,32 @@ export default {
   width: 100%;
 }
 
-/* Buttons - more visible in dark theme */
 .btn-primary {
   width: 100%;
-  padding: 1.2rem;
-  background: var(--primary-gradient);
+  padding: 1rem;
+  background: var(--primary-blue);
+  color: white;
   border: none;
-  border-radius: 12px;
-  color: white !important; /* Force white text */
+  border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  position: relative;
-  overflow: hidden;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
+  gap: 0.5rem;
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(74, 108, 247, 0.5);
+  background: var(--primary-blue-dark);
+  transform: translateY(-2px);
 }
 
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-shimmer {
@@ -775,12 +624,6 @@ export default {
   left: 100%;
 }
 
-.btn-icon {
-  font-size: 1.1rem;
-  color: white !important; /* Force white icon */
-}
-
-/* Task items - dark version */
 .task-container {
   margin-top: 1rem;
 }
@@ -791,43 +634,35 @@ export default {
 }
 
 .task-item {
-  background: rgba(23, 25, 35, 0.7);
-  border: 1px solid rgba(74, 108, 247, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  border-left: 4px solid var(--primary-blue);
 }
 
 .task-item:hover {
-  background: rgba(23, 25, 35, 0.9);
   transform: translateX(5px);
   box-shadow: var(--shadow-soft);
 }
 
 .task-completed {
-  opacity: 0.6;
+  opacity: 0.7;
+  border-left-color: #cbd5e0;
 }
 
-.task-priority-indicator {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--primary-gradient);
-  border-radius: 0 2px 2px 0;
+.task-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .task-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1rem;
 }
 
-/* Checkbox - dark version */
 .custom-checkbox {
   position: relative;
 }
@@ -838,11 +673,10 @@ export default {
 
 .checkbox-label {
   display: block;
-  width: 24px;
-  height: 24px;
-  background: rgba(23, 25, 35, 0.9);
-  border: 2px solid rgba(74, 108, 247, 0.7);
-  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--primary-blue);
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -853,54 +687,50 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  color: white !important; /* Force white checkmark */
-  font-size: 0.8rem;
+  color: white;
+  font-size: 0.7rem;
   transition: transform 0.2s ease;
 }
 
 .checkbox-input:checked + .checkbox-label {
-  background: var(--success-gradient);
-  border-color: transparent;
-  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
 }
 
 .checkbox-input:checked + .checkbox-label .checkbox-icon {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Action buttons - more visible */
 .task-actions {
   display: flex;
   gap: 0.5rem;
 }
 
 .action-btn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
-  background: rgba(74, 108, 247, 0.1);
-  color: #6a8cff !important; /* Force colored icon */
+  font-size: 0.8rem;
+  background: transparent;
+  color: var(--text-secondary);
 }
 
 .action-btn:hover {
-  background: rgba(74, 108, 247, 0.2);
   transform: scale(1.1);
 }
 
-.action-btn.delete-btn {
-  background: rgba(255, 94, 94, 0.1);
-  color: #ff5e5e !important; /* Force red icon */
+.action-btn.edit-btn:hover {
+  color: var(--primary-blue);
 }
 
 .action-btn.delete-btn:hover {
-  background: rgba(255, 94, 94, 0.2);
+  color: #e53e3e;
 }
 
 .task-body {
@@ -908,14 +738,13 @@ export default {
 }
 
 .task-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
 }
 
 .task-title.completed {
   text-decoration: line-through;
-  opacity: 0.6;
   color: var(--text-secondary);
 }
 
@@ -926,19 +755,12 @@ export default {
 }
 
 .deadline-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(74, 108, 247, 0.1);
-  padding: 0.3rem 0.8rem;
-  border-radius: 12px;
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
-/* Edit mode - dark version */
 .edit-mode {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .edit-input {
@@ -953,85 +775,73 @@ export default {
 .btn-save, .btn-cancel {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .btn-save {
-  background: var(--success-gradient);
-  color: white !important; /* Force white text */
+  background: var(--primary-blue);
+  color: white;
 }
 
 .btn-save:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
+  background: var(--primary-blue-dark);
 }
 
 .btn-cancel {
-  background: rgba(74, 108, 247, 0.1);
-  color: var(--text-secondary) !important; /* Force correct text color */
+  background: #e2e8f0;
+  color: var(--text-secondary);
 }
 
 .btn-cancel:hover {
-  background: rgba(74, 108, 247, 0.2);
+  background: #cbd5e0;
 }
 
-/* Empty state - dark version */
 .empty-state {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 2rem 1rem;
   color: var(--text-secondary);
 }
 
 .empty-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: var(--primary-blue);
   opacity: 0.6;
-  color: #4a6cf7 !important; /* Force blue icon */
 }
 
 .empty-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
 }
 
 .empty-subtitle {
+  font-size: 0.9rem;
   opacity: 0.8;
-  font-size: 1rem;
 }
 
-/* Force all icons to be visible */
-.fas, .far {
-  color: inherit !important;
-}
-
-/* Responsive design */
 @media (max-width: 768px) {
-  .app-header {
-    margin: 10px;
-    padding: 1.5rem;
-  }
-
-  .header-title {
-    font-size: 2rem;
-  }
-
   .content-wrapper {
-    padding: 0 10px 2rem;
+    padding: 1.5rem 1rem;
   }
-
+  
+  .app-header {
+    padding: 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.75rem;
+  }
+  
   .card {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
-
+  
   .input-group {
     grid-template-columns: 1fr;
   }
