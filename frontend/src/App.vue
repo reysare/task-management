@@ -20,7 +20,9 @@
           </div>
           <h1 class="header-title">Daily Flow</h1>
         </div>
-        <p class="header-tagline">Transform your daily routine into a masterpiece</p>
+        <p class="header-tagline">
+          Transform your daily routine into a masterpiece
+        </p>
       </div>
       <div class="header-decoration">
         <div class="deco-circle deco-1"></div>
@@ -60,7 +62,9 @@
                 :disabled="isLoading"
                 id="taskInput"
               />
-              <label for="taskInput" class="floating-label">What needs to be accomplished?</label>
+              <label for="taskInput" class="floating-label"
+                >What needs to be accomplished?</label
+              >
               <div class="input-highlight"></div>
             </div>
             <div class="floating-input">
@@ -71,7 +75,9 @@
                 :disabled="isLoading"
                 id="deadlineInput"
               />
-              <label for="deadlineInput" class="floating-label">Target completion</label>
+              <label for="deadlineInput" class="floating-label"
+                >Target completion</label
+              >
               <div class="input-highlight"></div>
             </div>
           </div>
@@ -93,15 +99,20 @@
           </div>
           <h2 class="card-title">Mission Control</h2>
           <div class="task-counter" v-if="tasks.length">
-            {{ tasks.filter(t => !t.is_done).length }} active
+            {{ tasks.filter((t) => !t.is_done).length }} active
           </div>
         </div>
-        
+
         <div class="task-container">
           <div v-if="tasks.length" class="task-grid">
-            <div v-for="task in tasks" :key="task.id" class="task-item" :class="{ 'task-completed': task.is_done }">
+            <div
+              v-for="task in tasks"
+              :key="task.id"
+              class="task-item"
+              :class="{ 'task-completed': task.is_done }"
+            >
               <div class="task-priority-indicator"></div>
-              
+
               <div class="task-content">
                 <div class="task-header">
                   <div class="custom-checkbox">
@@ -119,7 +130,7 @@
                       </div>
                     </label>
                   </div>
-                  
+
                   <div class="task-actions">
                     <button
                       v-if="editingTaskId !== task.id"
@@ -140,7 +151,7 @@
                     </button>
                   </div>
                 </div>
-                
+
                 <div class="task-body">
                   <div v-if="editingTaskId === task.id" class="edit-mode">
                     <div class="floating-input">
@@ -152,23 +163,33 @@
                         placeholder=" "
                         id="editInput"
                       />
-                      <label for="editInput" class="floating-label">Mission name</label>
+                      <label for="editInput" class="floating-label"
+                        >Mission name</label
+                      >
                       <div class="input-highlight"></div>
                     </div>
                     <div class="edit-actions">
-                      <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">
+                      <button
+                        @click="updateTask(task)"
+                        class="btn-save"
+                        :disabled="isLoading"
+                      >
                         <i class="fas fa-save"></i>
                         <span>Save</span>
                       </button>
-                      <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">
+                      <button
+                        @click="cancelEdit"
+                        class="btn-cancel"
+                        :disabled="isLoading"
+                      >
                         <i class="fas fa-times"></i>
                         <span>Cancel</span>
                       </button>
                     </div>
                   </div>
-                  
+
                   <div v-else class="display-mode">
-                    <h3 class="task-title" :class="{ 'completed': task.is_done }">
+                    <h3 class="task-title" :class="{ completed: task.is_done }">
                       {{ task.title }}
                     </h3>
                     <div class="task-meta">
@@ -180,17 +201,19 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="task-glow"></div>
             </div>
           </div>
-          
+
           <div v-else class="empty-state">
             <div class="empty-icon">
               <i class="fas fa-seedling"></i>
             </div>
             <h3 class="empty-title">Ready for your first mission?</h3>
-            <p class="empty-subtitle">Your journey to productivity starts here ✨</p>
+            <p class="empty-subtitle">
+              Your journey to productivity starts here ✨
+            </p>
           </div>
         </div>
       </div>
@@ -199,7 +222,15 @@
 </template>
 
 <script>
-import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
 export default {
   data() {
@@ -214,7 +245,7 @@ export default {
     };
   },
   watch: {
-    '$userId': {
+    $userId: {
       handler(newUserId) {
         if (newUserId) {
           this.fetchTasksRealtime();
@@ -226,8 +257,8 @@ export default {
           this.tasks = [];
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   beforeUnmount() {
     if (this.unsubscribe) {
@@ -243,46 +274,63 @@ export default {
 
       this.isLoading = true;
 
-      const tasksCollectionRef = collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`);
+      const tasksCollectionRef = collection(
+        this.$db,
+        `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+      );
       const q = query(tasksCollectionRef);
 
-      this.unsubscribe = onSnapshot(q, (snapshot) => {
-        const fetchedTasks = [];
-        snapshot.forEach((doc) => {
-          fetchedTasks.push({ id: doc.id, ...doc.data() });
-        });
-        this.tasks = fetchedTasks.sort((a, b) => {
-          if (a.is_done !== b.is_done) {
-            return a.is_done ? 1 : -1;
-          }
-          if (a.deadline && b.deadline) {
-            return new Date(a.deadline) - new Date(b.deadline);
-          }
-          if (a.created_at && b.created_at) {
-              const dateA = a.created_at.toDate ? a.created_at.toDate() : new Date(a.created_at);
-              const dateB = b.created_at.toDate ? b.created_at.toDate() : new Date(b.created_at);
+      this.unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          const fetchedTasks = [];
+          snapshot.forEach((doc) => {
+            fetchedTasks.push({ id: doc.id, ...doc.data() });
+          });
+          this.tasks = fetchedTasks.sort((a, b) => {
+            if (a.is_done !== b.is_done) {
+              return a.is_done ? 1 : -1;
+            }
+            if (a.deadline && b.deadline) {
+              return new Date(a.deadline) - new Date(b.deadline);
+            }
+            if (a.created_at && b.created_at) {
+              const dateA = a.created_at.toDate
+                ? a.created_at.toDate()
+                : new Date(a.created_at);
+              const dateB = b.created_at.toDate
+                ? b.created_at.toDate()
+                : new Date(b.created_at);
               return dateB - dateA;
-          }
-          return 0;
-        });
-        this.isLoading = false;
-        console.log("Tugas diambil secara real-time:", this.tasks);
-      }, (error) => {
-        console.error("Error saat mengambil tugas real-time:", error);
-        this.isLoading = false;
-      });
+            }
+            return 0;
+          });
+          this.isLoading = false;
+          console.log("Tugas diambil secara real-time:", this.tasks);
+        },
+        (error) => {
+          console.error("Error saat mengambil tugas real-time:", error);
+          this.isLoading = false;
+        }
+      );
     },
 
     async addTask() {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
       try {
-        await addDoc(collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`), {
-          title: this.newTask,
-          deadline: this.newDeadline,
-          is_done: false,
-          created_at: new Date(),
-        });
+        await addDoc(
+          collection(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+          ),
+          {
+            title: this.newTask,
+            deadline: this.newDeadline,
+            is_done: false,
+            created_at: new Date(),
+          }
+        );
         this.newTask = "";
         this.newDeadline = "";
         console.log("Tugas ditambahkan ke Firestore.");
@@ -295,7 +343,13 @@ export default {
       if (!id) return;
 
       try {
-        await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
+        await deleteDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            id
+          )
+        );
         console.log(`Tugas dengan ID ${id} dihapus.`);
       } catch (err) {
         console.error("Gagal menghapus tugas:", err);
@@ -306,9 +360,16 @@ export default {
       if (!task || !task.id) return;
 
       try {
-        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          is_done: !task.is_done,
-        });
+        await updateDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            task.id
+          ),
+          {
+            is_done: !task.is_done,
+          }
+        );
         console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
@@ -329,9 +390,16 @@ export default {
       if (!this.editedTaskTitle.trim() || !task || !task.id) return;
 
       try {
-        await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          title: this.editedTaskTitle,
-        });
+        await updateDoc(
+          doc(
+            this.$db,
+            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
+            task.id
+          ),
+          {
+            title: this.editedTaskTitle,
+          }
+        );
         this.editingTaskId = null;
         this.editedTaskTitle = "";
         console.log(`Tugas dengan ID ${task.id} diperbarui.`);
@@ -341,20 +409,23 @@ export default {
     },
 
     formatDate(dateString) {
-      if (!dateString) return '';
+      if (!dateString) return "";
       const date = new Date(dateString);
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       if (date.toDateString() === today.toDateString()) {
-        return 'Today';
+        return "Today";
       } else if (date.toDateString() === tomorrow.toDateString()) {
-        return 'Tomorrow';
+        return "Tomorrow";
       } else {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
       }
-    }
+    },
   },
 };
 </script>
@@ -362,18 +433,20 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Root variables updated for softer blues */
+/* Updated color variables for darker theme */
 :root {
-  --primary-gradient: linear-gradient(135deg, #6a8cff 0%, #4d7dff 100%);
-  --secondary-gradient: linear-gradient(135deg, #8ab1ff 0%, #6a8cff 100%);
-  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00d2ff 100%);
-  --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-  --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(106, 140, 255, 0.15);
-  --text-primary: #2d3748;
-  --text-secondary: #4a5568;
-  --shadow-soft: 0 10px 30px rgba(106, 140, 255, 0.08);
-  --shadow-hover: 0 15px 40px rgba(106, 140, 255, 0.12);
+  --primary-gradient: linear-gradient(135deg, #4a6cf7 0%, #2541b2 100%);
+  --secondary-gradient: linear-gradient(135deg, #6a8cff 0%, #4a6cf7 100%);
+  --success-gradient: linear-gradient(135deg, #3aa8ff 0%, #0077ff 100%);
+  --danger-gradient: linear-gradient(135deg, #ff5e5e 0%, #d23369 100%);
+  --dark-bg: #1a202c;
+  --darker-bg: #171923;
+  --card-bg: rgba(26, 32, 44, 0.8);
+  --card-border: rgba(74, 108, 247, 0.2);
+  --text-primary: #f7fafc;
+  --text-secondary: #cbd5e0;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.4);
   --border-radius: 16px;
 }
 
@@ -383,16 +456,16 @@ export default {
   box-sizing: border-box;
 }
 
-/* Main layout with softer background */
+/* Darker main layout */
 .main-layout {
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #f8faff 0%, #e6f0ff 100%);
+  background: var(--dark-bg);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Animated floating shapes - made more subtle */
+/* Animated floating shapes - darker version */
 .animated-bg {
   position: fixed;
   top: 0;
@@ -411,7 +484,7 @@ export default {
 
 .shape {
   position: absolute;
-  background: rgba(106, 140, 255, 0.08);
+  background: rgba(74, 108, 247, 0.08);
   border-radius: 50%;
   animation: float 20s infinite linear;
 }
@@ -422,18 +495,17 @@ export default {
   100% { transform: translateY(0px) rotate(360deg); opacity: 0.5; }
 }
 
-/* Header with better contrast */
+/* Header with dark theme */
 .app-header {
-  background: var(--glass-bg);
+  background: rgba(23, 25, 35, 0.9);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   border-radius: 0 0 var(--border-radius) var(--border-radius);
   margin: 20px 20px 0 20px;
   padding: 2rem;
   position: relative;
   z-index: 10;
   box-shadow: var(--shadow-soft);
-  color: var(--text-primary);
 }
 
 .header-content {
@@ -459,8 +531,8 @@ export default {
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  color: white;
-  box-shadow: 0 8px 20px rgba(106, 140, 255, 0.3);
+  color: white !important;
+  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
 }
 
 .header-title {
@@ -468,6 +540,9 @@ export default {
   font-weight: 700;
   margin: 0;
   color: var(--text-primary);
+  background: linear-gradient(135deg, #f7fafc 0%, #cbd5e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .header-tagline {
@@ -478,14 +553,14 @@ export default {
   color: var(--text-secondary);
 }
 
-/* Loading overlay */
+/* Loading overlay - dark version */
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(106, 140, 255, 0.9);
+  background: rgba(26, 32, 44, 0.95);
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
@@ -506,18 +581,13 @@ export default {
   width: 100%;
   height: 100%;
   border: 3px solid transparent;
-  border-top: 3px solid white;
+  border-top: 3px solid var(--text-primary);
   border-radius: 50%;
   animation: modernSpin 1.5s linear infinite;
 }
 
-@keyframes modernSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .loading-text {
-  color: white;
+  color: var(--text-primary);
   font-size: 1.2rem;
   font-weight: 400;
   opacity: 0.9;
@@ -532,11 +602,11 @@ export default {
   z-index: 10;
 }
 
-/* Cards with better contrast */
+/* Cards with dark theme */
 .card {
-  background: var(--glass-bg);
+  background: var(--card-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--card-border);
   border-radius: var(--border-radius);
   padding: 2rem;
   margin-bottom: 2rem;
@@ -557,7 +627,7 @@ export default {
   position: relative;
 }
 
-/* Improved icon visibility */
+/* Fixed icon visibility */
 .card-icon {
   width: 40px;
   height: 40px;
@@ -566,9 +636,9 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white !important;
+  color: white !important; /* Force white color for icons */
   font-size: 1.2rem;
-  box-shadow: 0 4px 15px rgba(106, 140, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(74, 108, 247, 0.4);
 }
 
 .card-title {
@@ -586,10 +656,10 @@ export default {
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
 }
 
-/* Form styling */
+/* Form styling - dark version */
 .form {
   display: flex;
   flex-direction: column;
@@ -601,13 +671,7 @@ export default {
   gap: 1rem;
 }
 
-@media (min-width: 768px) {
-  .input-group {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-/* Input fields with better visibility */
+/* Input fields - dark theme */
 .floating-input {
   position: relative;
 }
@@ -615,8 +679,8 @@ export default {
 .input-field {
   width: 100%;
   padding: 1.2rem 1rem 0.8rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(106, 140, 255, 0.2);
+  background: rgba(23, 25, 35, 0.7);
+  border: 2px solid rgba(74, 108, 247, 0.3);
   border-radius: 12px;
   color: var(--text-primary);
   font-size: 1rem;
@@ -630,8 +694,8 @@ export default {
 }
 
 .input-field:focus {
-  border-color: rgba(106, 140, 255, 0.6);
-  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(74, 108, 247, 0.7);
+  background: rgba(23, 25, 35, 0.9);
 }
 
 .floating-label {
@@ -666,14 +730,14 @@ export default {
   width: 100%;
 }
 
-/* Improved button visibility */
+/* Buttons - more visible in dark theme */
 .btn-primary {
   width: 100%;
   padding: 1.2rem;
   background: var(--primary-gradient);
   border: none;
   border-radius: 12px;
-  color: white;
+  color: white !important; /* Force white text */
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -684,22 +748,17 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  box-shadow: 0 8px 20px rgba(106, 140, 255, 0.3);
+  box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
 }
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(106, 140, 255, 0.4);
-}
-
-.btn-primary:active {
-  transform: translateY(-1px);
+  box-shadow: 0 12px 25px rgba(74, 108, 247, 0.5);
 }
 
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
 .btn-shimmer {
@@ -716,19 +775,12 @@ export default {
   left: 100%;
 }
 
-.btn-text {
-  position: relative;
-  z-index: 2;
-}
-
 .btn-icon {
-  position: relative;
-  z-index: 2;
   font-size: 1.1rem;
-  color: white !important;
+  color: white !important; /* Force white icon */
 }
 
-/* Task items with better contrast */
+/* Task items - dark version */
 .task-container {
   margin-top: 1rem;
 }
@@ -739,8 +791,8 @@ export default {
 }
 
 .task-item {
-  background: var(--glass-bg);
-  border: 1px solid rgba(106, 140, 255, 0.1);
+  background: rgba(23, 25, 35, 0.7);
+  border: 1px solid rgba(74, 108, 247, 0.2);
   border-radius: 12px;
   padding: 1.5rem;
   position: relative;
@@ -749,13 +801,13 @@ export default {
 }
 
 .task-item:hover {
+  background: rgba(23, 25, 35, 0.9);
   transform: translateX(5px);
   box-shadow: var(--shadow-soft);
 }
 
 .task-completed {
-  opacity: 0.7;
-  transform: scale(0.98);
+  opacity: 0.6;
 }
 
 .task-priority-indicator {
@@ -775,7 +827,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-/* Improved checkbox visibility */
+/* Checkbox - dark version */
 .custom-checkbox {
   position: relative;
 }
@@ -788,8 +840,8 @@ export default {
   display: block;
   width: 24px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(106, 140, 255, 0.6);
+  background: rgba(23, 25, 35, 0.9);
+  border: 2px solid rgba(74, 108, 247, 0.7);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -801,7 +853,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  color: white;
+  color: white !important; /* Force white checkmark */
   font-size: 0.8rem;
   transition: transform 0.2s ease;
 }
@@ -809,14 +861,14 @@ export default {
 .checkbox-input:checked + .checkbox-label {
   background: var(--success-gradient);
   border-color: transparent;
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
 }
 
 .checkbox-input:checked + .checkbox-label .checkbox-icon {
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* Improved action buttons visibility */
+/* Action buttons - more visible */
 .task-actions {
   display: flex;
   gap: 0.5rem;
@@ -833,22 +885,22 @@ export default {
   justify-content: center;
   transition: all 0.3s ease;
   font-size: 0.9rem;
-  background: rgba(106, 140, 255, 0.1);
-  color: #4a7dff !important;
+  background: rgba(74, 108, 247, 0.1);
+  color: #6a8cff !important; /* Force colored icon */
 }
 
 .action-btn:hover {
-  background: rgba(106, 140, 255, 0.2);
+  background: rgba(74, 108, 247, 0.2);
   transform: scale(1.1);
 }
 
 .action-btn.delete-btn {
-  background: rgba(255, 107, 107, 0.1);
-  color: #ff6b6b !important;
+  background: rgba(255, 94, 94, 0.1);
+  color: #ff5e5e !important; /* Force red icon */
 }
 
 .action-btn.delete-btn:hover {
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(255, 94, 94, 0.2);
 }
 
 .task-body {
@@ -859,7 +911,6 @@ export default {
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
 }
 
 .task-title.completed {
@@ -878,14 +929,14 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(106, 140, 255, 0.08);
+  background: rgba(74, 108, 247, 0.1);
   padding: 0.3rem 0.8rem;
   border-radius: 12px;
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
 
-/* Edit mode styling */
+/* Edit mode - dark version */
 .edit-mode {
   margin-top: 1rem;
 }
@@ -914,24 +965,24 @@ export default {
 
 .btn-save {
   background: var(--success-gradient);
-  color: white;
+  color: white !important; /* Force white text */
 }
 
 .btn-save:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+  box-shadow: 0 4px 15px rgba(58, 168, 255, 0.4);
 }
 
 .btn-cancel {
-  background: rgba(106, 140, 255, 0.1);
-  color: var(--text-secondary);
+  background: rgba(74, 108, 247, 0.1);
+  color: var(--text-secondary) !important; /* Force correct text color */
 }
 
 .btn-cancel:hover {
-  background: rgba(106, 140, 255, 0.2);
+  background: rgba(74, 108, 247, 0.2);
 }
 
-/* Empty state */
+/* Empty state - dark version */
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
@@ -942,7 +993,7 @@ export default {
   font-size: 3rem;
   margin-bottom: 1rem;
   opacity: 0.6;
-  color: #6a8cff;
+  color: #4a6cf7 !important; /* Force blue icon */
 }
 
 .empty-title {
@@ -957,7 +1008,7 @@ export default {
   font-size: 1rem;
 }
 
-/* Ensure all icons are visible */
+/* Force all icons to be visible */
 .fas, .far {
   color: inherit !important;
 }
