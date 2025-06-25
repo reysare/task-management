@@ -458,7 +458,7 @@ export default {
 .main-layout {
   min-height: 100vh;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #f8faff 0%, #e8f2ff 50%, #dae9ff 100%);
+  background: linear-gradient(135deg, #f8faff 0%, #e8f2ff 50%, #a7caff 100%);
   position: relative;
   overflow-x: hidden;
 }
