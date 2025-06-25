@@ -434,33 +434,36 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
 /* Root variables for soft blue theme */
-/* Root variables untuk tema biru yang nyaman di mata */
 :root {
-  --primary-color: #3b82f6;
-  --secondary-color: #60a5fa;
-  --accent-color: #1e40af;
-  --success-color: #10b981;
-  --danger-color: #ef4444;
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --text-primary: #ffffff;
-  --text-secondary: #e2e8f0;
-  --text-muted: #cbd5e1;
-  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.18);
+  --primary-gradient: linear-gradient(135deg, #5582ff 0%, #0d4eff 100%);
+  --secondary-gradient: linear-gradient(135deg, #a8c3ff 0%, #7c9bf0 100%);
+  --success-gradient: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+  --danger-gradient: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-border: rgba(124, 155, 240, 0.2);
+  --text-primary: #2c3e50;
+  --text-secondary: #546e7a;
+  --shadow-soft: 0 8px 24px rgba(124, 155, 240, 0.12);
+  --shadow-hover: 0 12px 32px rgba(124, 155, 240, 0.18);
   --border-radius: 14px;
 }
 
-/* Background utama dengan warna biru tua yang nyaman */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Main layout with soft animated background */
 .main-layout {
   min-height: 100vh;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #1e3a8a; /* Biru tua solid yang nyaman di mata */
+  background: linear-gradient(135deg, #f8faff 0%, #e8f2ff 50%, #a7caff 100%);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Floating shapes dengan opacity rendah */
+/* Refined floating shapes */
 .animated-bg {
   position: fixed;
   top: 0;
@@ -471,15 +474,84 @@ export default {
   z-index: 1;
 }
 
-.shape {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.03); /* Sangat transparan */
-  border-radius: 50%;
-  animation: gentleFloat 25s infinite linear;
-  filter: blur(2px);
+.floating-shapes {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
-/* Header dengan glassmorphism */
+.shape {
+  position: absolute;
+  background: rgba(124, 155, 240, 0.08);
+  border-radius: 50%;
+  animation: gentleFloat 25s infinite linear;
+  filter: blur(1px);
+}
+
+.shape-1 {
+  width: 120px;
+  height: 120px;
+  top: 15%;
+  left: 8%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 80px;
+  height: 80px;
+  top: 65%;
+  left: 75%;
+  animation-delay: -8s;
+}
+
+.shape-3 {
+  width: 140px;
+  height: 140px;
+  top: 75%;
+  left: 15%;
+  animation-delay: -12s;
+}
+
+.shape-4 {
+  width: 60px;
+  height: 60px;
+  top: 35%;
+  left: 68%;
+  animation-delay: -18s;
+}
+
+.shape-5 {
+  width: 160px;
+  height: 160px;
+  top: 5%;
+  left: 55%;
+  animation-delay: -6s;
+}
+
+@keyframes gentleFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+    opacity: 0.4;
+  }
+}
+
+/* Refined glassmorphism header */
 .app-header {
   background: var(--glass-bg);
   backdrop-filter: blur(25px);
@@ -499,6 +571,14 @@ export default {
   z-index: 2;
 }
 
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 0.4rem;
+}
+
 .header-title {
   font-size: 2rem;
   font-weight: 600;
@@ -508,13 +588,139 @@ export default {
 
 .header-tagline {
   font-size: 0.9rem;
-  opacity: 0.8;
+  opacity: 0.75;
   margin: 0;
   font-weight: 400;
   color: var(--text-secondary);
 }
 
-/* Card styling dengan background transparan */
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(124, 155, 240, 0.08);
+  animation: softPulse 6s ease-in-out infinite;
+}
+
+.deco-1 {
+  width: 80px;
+  height: 80px;
+  top: -40px;
+  right: -25px;
+  animation-delay: 0s;
+}
+
+.deco-2 {
+  width: 50px;
+  height: 50px;
+  bottom: -15px;
+  left: -15px;
+  animation-delay: 2s;
+}
+
+.deco-3 {
+  width: 65px;
+  height: 65px;
+  top: 50%;
+  left: -32px;
+  animation-delay: 4s;
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(124, 155, 240, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modern-spinner {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1.5rem;
+}
+
+.spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: gentleSpin 1.8s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+  width: 75%;
+  height: 75%;
+  top: 12.5%;
+  left: 12.5%;
+  animation-delay: -0.6s;
+}
+
+.spinner-ring:nth-child(3) {
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  left: 25%;
+  animation-delay: -1.2s;
+}
+
+@keyframes gentleSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: white;
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Content wrapper */
+.content-wrapper {
+  max-width: 780px;
+  margin: -16px auto 0;
+  padding: 0 16px 2.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* Refined card styling */
 .card {
   background: var(--glass-bg);
   backdrop-filter: blur(25px);
@@ -531,6 +737,14 @@ export default {
   box-shadow: var(--shadow-hover);
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  position: relative;
+}
+
 .card-title {
   font-size: 1.3rem;
   font-weight: 600;
@@ -539,12 +753,44 @@ export default {
   flex-grow: 1;
 }
 
-/* Input fields */
+.task-counter {
+  background: var(--success-gradient);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: 0 3px 12px rgba(100, 181, 246, 0.25);
+}
+
+/* Form styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.input-group {
+  display: grid;
+  gap: 0.8rem;
+}
+
+@media (min-width: 768px) {
+  .input-group {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* Floating input design */
+.floating-input {
+  position: relative;
+}
+
 .input-field {
   width: 100%;
   padding: 1rem 0.9rem 0.7rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.5px solid rgba(124, 155, 240, 0.25);
   border-radius: 10px;
   color: var(--text-primary);
   font-size: 0.9rem;
@@ -553,9 +799,13 @@ export default {
   transition: all 0.3s ease;
 }
 
+.input-field::placeholder {
+  color: transparent;
+}
+
 .input-field:focus {
-  border-color: var(--secondary-color);
-  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(124, 155, 240, 0.5);
+  background: rgba(255, 255, 255, 0.8);
 }
 
 .floating-label {
@@ -563,7 +813,7 @@ export default {
   left: 0.9rem;
   top: 0.9rem;
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   transition: all 0.3s ease;
   pointer-events: none;
   font-weight: 500;
@@ -576,11 +826,25 @@ export default {
   color: var(--text-secondary);
 }
 
-/* Button styling */
+.input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--primary-gradient);
+  transition: width 0.3s ease;
+}
+
+.input-field:focus ~ .input-highlight {
+  width: 100%;
+}
+
+/* Refined button */
 .btn-primary {
   width: 100%;
   padding: 1rem;
-  background: var(--primary-color);
+  background: var(--primary-gradient);
   border: none;
   border-radius: 10px;
   color: white;
@@ -594,19 +858,67 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 16px rgba(124, 155, 240, 0.25);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  background: var(--secondary-color);
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 20px rgba(124, 155, 240, 0.35);
 }
 
-/* Task items */
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.btn-primary:hover .btn-shimmer {
+  left: 100%;
+}
+
+.btn-text {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-icon {
+  position: relative;
+  z-index: 2;
+  font-size: 1rem;
+}
+
+/* Task grid layout */
+.task-container {
+  margin-top: 0.8rem;
+}
+
+.task-grid {
+  display: grid;
+  gap: 0.8rem;
+}
+
 .task-item {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(124, 155, 240, 0.15);
   border-radius: 10px;
   padding: 1.2rem;
   position: relative;
@@ -617,54 +929,75 @@ export default {
 .task-item:hover {
   transform: translateX(3px);
   box-shadow: var(--shadow-soft);
-  background: rgba(255, 255, 255, 0.12);
 }
 
-.task-title {
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  transition: all 0.3s ease;
-  color: var(--text-primary);
+.task-completed {
+  opacity: 0.65;
+  transform: scale(0.98);
 }
 
-.task-title.completed {
-  text-decoration: line-through;
-  opacity: 0.6;
-  color: var(--text-muted);
+.task-priority-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--primary-gradient);
+  border-radius: 0 1px 1px 0;
 }
 
-/* Task counter */
-.task-counter {
-  background: var(--success-color);
-  color: white;
-  padding: 0.4rem 0.8rem;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.3);
+.task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
 }
 
-/* Checkbox styling */
+.custom-checkbox {
+  position: relative;
+}
+
+.checkbox-input {
+  display: none;
+}
+
 .checkbox-label {
   display: block;
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(124, 155, 240, 0.35);
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
 }
 
-.checkbox-input:checked + .checkbox-label {
-  background: var(--success-color);
-  border-color: var(--success-color);
-  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.3);
+.checkbox-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  color: white;
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
 }
 
-/* Action buttons */
+.checkbox-input:checked + .checkbox-label {
+  background: var(--success-gradient);
+  border-color: transparent;
+  box-shadow: 0 3px 12px rgba(100, 181, 246, 0.25);
+}
+
+.checkbox-input:checked + .checkbox-label .checkbox-icon {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.task-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
 .action-btn {
   width: 28px;
   height: 28px;
@@ -676,49 +1009,139 @@ export default {
   justify-content: center;
   transition: all 0.3s ease;
   font-size: 0.8rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: rgba(124, 155, 240, 0.08);
+  color: #5b85f7;
   position: relative;
 }
 
 .action-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(124, 155, 240, 0.15);
   transform: scale(1.05);
 }
 
+/* Custom edit and delete icons using CSS */
+.edit-btn:before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat center;
+  mask-size: contain;
+}
+
 .delete-btn {
-  background: rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
+  background: rgba(244, 143, 177, 0.08);
+  color: #ec407a;
 }
 
 .delete-btn:hover {
-  background: rgba(239, 68, 68, 0.3);
+  background: rgba(244, 143, 177, 0.15);
 }
 
-/* Deadline badge */
+.delete-btn:before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3,6 5,6 21,6'%3E%3C/polyline%3E%3Cpath d='M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E")
+    no-repeat center;
+  mask-size: contain;
+}
+
+.task-body {
+  color: var(--text-primary);
+}
+
+.task-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  transition: all 0.3s ease;
+}
+
+.task-title.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+  color: var(--text-secondary);
+}
+
+.task-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
 .deadline-badge {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(124, 155, 240, 0.08);
   padding: 0.25rem 0.6rem;
   border-radius: 10px;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
+}
+
+/* Edit mode styling */
+.edit-mode {
+  margin-top: 0.8rem;
+}
+
+.edit-input {
+  margin-bottom: 0.8rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-save {
+  background: var(--success-gradient);
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(100, 181, 246, 0.25);
+}
+
+.btn-cancel {
+  background: rgba(124, 155, 240, 0.08);
+  color: var(--text-secondary);
+}
+
+.btn-cancel:hover {
+  background: rgba(124, 155, 240, 0.15);
 }
 
 /* Empty state */
 .empty-state {
   text-align: center;
   padding: 2.5rem 1rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 .empty-icon {
   font-size: 2.5rem;
   margin-bottom: 0.8rem;
   opacity: 0.5;
-  color: var(--text-secondary);
+  color: #7c9bf0;
 }
 
 .empty-title {
@@ -731,29 +1154,33 @@ export default {
 .empty-subtitle {
   opacity: 0.75;
   font-size: 0.9rem;
-  color: var(--text-muted);
 }
 
-/* Loading overlay */
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(30, 58, 138, 0.9);
-  backdrop-filter: blur(8px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-header {
+    margin: 8px;
+    padding: 1.2rem;
+  }
 
-.loading-text {
-  color: var(--text-primary);
-  font-size: 1rem;
-  font-weight: 400;
-  opacity: 0.9;
+  .header-title {
+    font-size: 1.7rem;
+  }
+
+  .header-tagline {
+    font-size: 0.8rem;
+  }
+
+  .content-wrapper {
+    padding: 0 8px 2rem;
+  }
+
+  .card {
+    padding: 1.2rem;
+  }
+
+  .input-group {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
