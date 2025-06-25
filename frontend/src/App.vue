@@ -435,14 +435,14 @@ export default {
 
 /* Root variables for soft blue theme */
 :root {
-  --primary-gradient: linear-gradient(135deg, #5582ff 0%, #0d4eff 100%);
-  --secondary-gradient: linear-gradient(135deg, #a8c3ff 0%, #7c9bf0 100%);
+  --primary-gradient:  #5582ff;
+  --secondary-gradient: #7c9bf0;
   --success-gradient: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
   --danger-gradient: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
   --glass-bg: rgba(255, 255, 255, 0.12);
   --glass-border: rgba(124, 155, 240, 0.2);
-  --text-primary: #2c3e50;
-  --text-secondary: #546e7a;
+  --text-primary: #000000;
+  --text-secondary: #696969;
   --shadow-soft: 0 8px 24px rgba(124, 155, 240, 0.12);
   --shadow-hover: 0 12px 32px rgba(124, 155, 240, 0.18);
   --border-radius: 14px;
