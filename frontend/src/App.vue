@@ -49,7 +49,7 @@
           <div class="card-icon">
             <i class="fas fa-magic"></i>
           </div>
-          <h2 class="card-title">Create New Mission</h2>
+          <h2 class="card-title">Create New Task</h2>
         </div>
         <form @submit.prevent="addTask" class="form">
           <div class="input-group">
@@ -63,7 +63,7 @@
                 id="taskInput"
               />
               <label for="taskInput" class="floating-label"
-                >What needs to be accomplished?</label
+                >Add Your Task</label
               >
               <div class="input-highlight"></div>
             </div>
@@ -76,13 +76,13 @@
                 id="deadlineInput"
               />
               <label for="deadlineInput" class="floating-label"
-                >Target completion</label
+                >Deadline</label
               >
               <div class="input-highlight"></div>
             </div>
           </div>
           <button type="submit" class="btn-primary" :disabled="isLoading">
-            <span class="btn-text">Launch Mission</span>
+            <span class="btn-text">Add to List</span>
             <div class="btn-icon">
               <i class="fas fa-rocket"></i>
             </div>
@@ -97,7 +97,7 @@
           <div class="card-icon">
             <i class="fas fa-list-ul"></i>
           </div>
-          <h2 class="card-title">Mission Control</h2>
+          <h2 class="card-title">Your Task List</h2>
           <div class="task-counter" v-if="tasks.length">
             {{ tasks.filter((t) => !t.is_done).length }} active
           </div>
@@ -210,7 +210,7 @@
             <div class="empty-icon">
               <i class="fas fa-seedling"></i>
             </div>
-            <h3 class="empty-title">Ready for your first mission?</h3>
+            <h3 class="empty-title">No Task Added</h3>
             <p class="empty-subtitle">
               Your journey to productivity starts here ✨
             </p>
@@ -435,16 +435,16 @@ export default {
 
 /* Root variables for soft blue theme */
 :root {
-  --primary-color: #64b5f6; /* Blue */
-  --primary-dark: #2196f3; /* Darker blue */
-  --secondary-color: #81c784; /* Greenish */
-  --danger-color: #ef5350; /* Red */
-  --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(200, 230, 201, 0.7); /* Lighter green border */
-  --text-primary: #333;
-  --text-secondary: #666;
-  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --primary-gradient: #5582ff;
+  --secondary-gradient: #0331b1;
+  --success-gradient: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+  --danger-gradient: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
+  --glass-bg: rgba(255, 255, 255, 0.719);
+  --glass-border: rgba(124, 155, 240, 0.2);
+  --text-primary: #000000;
+  --text-secondary: #696969;
+  --shadow-soft: 0 8px 24px rgba(124, 155, 240, 0.12);
+  --shadow-hover: 0 12px 32px rgba(124, 155, 240, 0.18);
   --border-radius: 14px;
 }
 
@@ -454,39 +454,121 @@ export default {
   box-sizing: border-box;
 }
 
-/* Main layout with a solid color background */
+/* Main layout with soft animated background */
 .main-layout {
   min-height: 100vh;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #e8f5e9; /* Light green background */
+  background: #e3f2fd;
   position: relative;
   overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-/* No animated background or floating shapes */
-.animated-bg,
-.floating-shapes,
+/* Refined floating shapes */
+.animated-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-shapes {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .shape {
-  display: none;
+  position: absolute;
+  background: rgba(173, 216, 230, 0.5); /* Light blue, slightly transparent */
+  border-radius: 50%;
+  animation: gentleFloat 25s infinite linear;
+  filter: blur(1px);
 }
 
-/* More engaging header */
+.shape-1 {
+  width: 120px;
+  height: 120px;
+  top: 15%;
+  left: 8%;
+  animation-delay: 0s;
+}
+
+.shape-2 {
+  width: 80px;
+  height: 80px;
+  top: 65%;
+  left: 75%;
+  animation-delay: -8s;
+}
+
+.shape-3 {
+  width: 140px;
+  height: 140px;
+  top: 75%;
+  left: 15%;
+  animation-delay: -12s;
+}
+
+.shape-4 {
+  width: 60px;
+  height: 60px;
+  top: 35%;
+  left: 68%;
+  animation-delay: -18s;
+}
+
+.shape-5 {
+  width: 160px;
+  height: 160px;
+  top: 5%;
+  left: 55%;
+  animation-delay: -6s;
+}
+
+@keyframes gentleFloat {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-15px) rotate(90deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translateY(-15px) rotate(270deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+    opacity: 0.4;
+  }
+}
+
+/* Refined glassmorphism header */
 .app-header {
-  background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); /* Green gradient */
-  padding: 2.5rem 1rem;
-  text-align: center;
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(227, 242, 253, 0.5);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  margin: 16px 16px 0 16px;
+  padding: 1.8rem;
   position: relative;
   z-index: 10;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%); /* Slanted bottom edge */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .header-content {
-  max-width: 780px;
-  margin: 0 auto;
+  text-align: center;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 2;
 }
 
 .logo-section {
@@ -494,27 +576,74 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  margin-bottom: 0.6rem;
-}
-
-.logo-icon {
-  font-size: 2.5rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.4rem;
 }
 
 .header-title {
-  font-size: 2.8rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 600;
   margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333;
 }
 
 .header-tagline {
-  font-size: 1.1rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  opacity: 0.75;
   margin: 0;
   font-weight: 400;
+  color: #666;
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.deco-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(173, 216, 230, 0.5);
+  animation: softPulse 6s ease-in-out infinite;
+}
+
+.deco-1 {
+  width: 80px;
+  height: 80px;
+  top: -40px;
+  right: -25px;
+  animation-delay: 0s;
+}
+
+.deco-2 {
+  width: 50px;
+  height: 50px;
+  bottom: -15px;
+  left: -15px;
+  animation-delay: 2s;
+}
+
+.deco-3 {
+  width: 65px;
+  height: 65px;
+  top: 50%;
+  left: -32px;
+  animation-delay: 4s;
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
 }
 
 /* Loading overlay */
@@ -585,28 +714,27 @@ export default {
 /* Content wrapper */
 .content-wrapper {
   max-width: 780px;
-  margin: -60px auto 0; /* Adjust margin to overlap with header */
+  margin: -16px auto 0;
   padding: 0 16px 2.5rem;
   position: relative;
   z-index: 10;
-  flex-grow: 1; /* Allow content to grow */
 }
 
-/* More attractive and simple card styling */
+/* Refined card styling */
 .card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(25px);
+  border: 1px solid rgba(227, 242, 253, 0.5);
   border-radius: var(--border-radius);
   padding: 1.8rem;
   margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden; /* For shimmer effect on button */
 }
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 .card-header {
@@ -617,21 +745,16 @@ export default {
   position: relative;
 }
 
-.card-icon {
-  font-size: 1.5rem;
-  color: var(--primary-dark);
-}
-
 .card-title {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #333;
   margin: 0;
   flex-grow: 1;
 }
 
 .task-counter {
-  background: var(--secondary-color);
+  background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); /* Greenish */
   color: white;
   padding: 0.4rem 0.8rem;
   border-radius: 16px;
@@ -666,10 +789,10 @@ export default {
 .input-field {
   width: 100%;
   padding: 1rem 0.9rem 0.7rem;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(200, 230, 201, 0.7); /* Light green border */
+  background: rgba(255, 255, 255, 0.6);
+  border: 1.5px solid rgba(173, 216, 230, 0.5);
   border-radius: 10px;
-  color: var(--text-primary);
+  color: #333;
   font-size: 0.9rem;
   font-weight: 500;
   outline: none;
@@ -681,8 +804,8 @@ export default {
 }
 
 .input-field:focus {
-  border-color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.95);
+  border-color: #90caf9; /* Lighter blue on focus */
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .floating-label {
@@ -690,7 +813,7 @@ export default {
   left: 0.9rem;
   top: 0.9rem;
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: #666;
   transition: all 0.3s ease;
   pointer-events: none;
   font-weight: 500;
@@ -700,7 +823,7 @@ export default {
 .input-field:not(:placeholder-shown) + .floating-label {
   top: 0.25rem;
   font-size: 0.7rem;
-  color: var(--primary-dark);
+  color: #666;
 }
 
 .input-highlight {
@@ -708,8 +831,8 @@ export default {
   bottom: 0;
   left: 0;
   width: 0;
-  height: 2px; /* Thicker highlight */
-  background: var(--primary-color);
+  height: 1.5px;
+  background: #64b5f6; /* Blue highlight */
   transition: width 0.3s ease;
 }
 
@@ -721,7 +844,7 @@ export default {
 .btn-primary {
   width: 100%;
   padding: 1rem;
-  background: var(--primary-color);
+  background: #64b5f6; /* Blue button */
   border: none;
   border-radius: 10px;
   color: white;
@@ -739,7 +862,6 @@ export default {
 }
 
 .btn-primary:hover {
-  background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(100, 181, 246, 0.35);
 }
@@ -795,8 +917,8 @@ export default {
 }
 
 .task-item {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(227, 242, 253, 0.5);
   border-radius: 10px;
   padding: 1.2rem;
   position: relative;
@@ -806,7 +928,7 @@ export default {
 
 .task-item:hover {
   transform: translateX(3px);
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .task-completed {
@@ -820,7 +942,7 @@ export default {
   top: 0;
   width: 3px;
   height: 100%;
-  background: var(--secondary-color); /* Green indicator */
+  background: #64b5f6; /* Blue indicator */
   border-radius: 0 1px 1px 0;
 }
 
@@ -831,19 +953,12 @@ export default {
   margin-bottom: 0.8rem;
 }
 
-/* Custom checkbox with checkmark */
 .custom-checkbox {
   position: relative;
-  display: inline-block; /* Ensures the label wraps correctly */
-  width: 20px;
-  height: 20px;
 }
 
 .checkbox-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
+  display: none;
 }
 
 .checkbox-label {
@@ -851,36 +966,31 @@ export default {
   width: 20px;
   height: 20px;
   background: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid var(--primary-color); /* Blue border for unchecked */
+  border: 1.5px solid rgba(173, 216, 230, 0.7);
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
 }
 
-.checkbox-label::after {
-  content: "";
+.checkbox-icon {
   position: absolute;
-  left: 6px;
-  top: 3px;
-  width: 6px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg) scale(0);
-  opacity: 0;
-  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  color: white;
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
 }
 
 .checkbox-input:checked + .checkbox-label {
-  background: var(--secondary-color);
+  background: #81c784; /* Greenish when checked */
   border-color: transparent;
   box-shadow: 0 3px 12px rgba(102, 187, 106, 0.25);
 }
 
-.checkbox-input:checked + .checkbox-label::after {
-  transform: rotate(45deg) scale(1);
-  opacity: 1;
+.checkbox-input:checked + .checkbox-label .checkbox-icon {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .task-actions {
@@ -900,7 +1010,7 @@ export default {
   transition: all 0.3s ease;
   font-size: 0.8rem;
   background: rgba(173, 216, 230, 0.3); /* Light blue, transparent */
-  color: var(--primary-color);
+  color: #64b5f6; /* Blue icon */
   position: relative;
 }
 
@@ -910,23 +1020,37 @@ export default {
 }
 
 /* Custom edit and delete icons using CSS */
-.edit-btn i {
-  color: var(--primary-color);
-}
-.delete-btn i {
-  color: var(--danger-color);
+.edit-btn:before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat center;
+  mask-size: contain;
 }
 
 .delete-btn {
   background: rgba(255, 128, 171, 0.3); /* Light pink, transparent */
+  color: #ef5350; /* Red icon */
 }
 
 .delete-btn:hover {
   background: rgba(255, 128, 171, 0.5);
 }
 
+.delete-btn:before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3,6 5,6 21,6'%3E%3C/polyline%3E%3Cpath d='M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E")
+    no-repeat center;
+  mask-size: contain;
+}
+
 .task-body {
-  color: var(--text-primary);
+  color: #333;
 }
 
 .task-title {
@@ -939,7 +1063,7 @@ export default {
 .task-title.completed {
   text-decoration: line-through;
   opacity: 0.6;
-  color: var(--text-secondary);
+  color: #666;
 }
 
 .task-meta {
@@ -956,7 +1080,7 @@ export default {
   padding: 0.25rem 0.6rem;
   border-radius: 10px;
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: #666;
 }
 
 /* Edit mode styling */
@@ -988,7 +1112,7 @@ export default {
 }
 
 .btn-save {
-  background: var(--secondary-color);
+  background: linear-gradient(135deg, #81c784 0%, #66bb6a 100%); /* Greenish */
   color: white;
 }
 
@@ -998,8 +1122,8 @@ export default {
 }
 
 .btn-cancel {
-  background: rgba(173, 216, 230, 0.3);
-  color: var(--text-secondary);
+  background: rgba(173, 216, 230, 0.3); /* Light blue, transparent */
+  color: #666;
 }
 
 .btn-cancel:hover {
@@ -1010,21 +1134,21 @@ export default {
 .empty-state {
   text-align: center;
   padding: 2.5rem 1rem;
-  color: var(--text-secondary);
+  color: #666;
 }
 
 .empty-icon {
   font-size: 2.5rem;
   margin-bottom: 0.8rem;
   opacity: 0.5;
-  color: var(--primary-color);
+  color: #90caf9; /* Lighter blue */
 }
 
 .empty-title {
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
-  color: var(--text-primary);
+  color: #333;
 }
 
 .empty-subtitle {
@@ -1035,20 +1159,20 @@ export default {
 /* Responsive design */
 @media (max-width: 768px) {
   .app-header {
-    padding: 1.8rem 1rem;
+    margin: 8px;
+    padding: 1.2rem;
   }
 
   .header-title {
-    font-size: 2.2rem;
+    font-size: 1.7rem;
   }
 
   .header-tagline {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 
   .content-wrapper {
     padding: 0 8px 2rem;
-    margin-top: -40px;
   }
 
   .card {
