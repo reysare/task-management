@@ -263,367 +263,522 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 3rem; /* Increased padding at the bottom */
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif; /* Modern font stack */
+  padding-bottom: 3rem;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+  overflow-x: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+}
+
+.main-layout::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Header styling */
 .app-header {
-  background: linear-gradient(to right top, #6DD5ED, #2193B0); /* Fresh blue-teal gradient */
+  background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
   width: 100%;
-  padding: 2.5rem 2rem 3rem 2rem; /* Increased padding-bottom to prevent overlap */
+  padding: 3rem 2rem 4rem 2rem;
   color: white;
-  text-align: center; /* Center align header text */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Softer, wider shadow */
-  border-bottom-left-radius: 2px; /* More pronounced curves */
-  border-bottom-right-radius: 2px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
   position: relative;
-  overflow: hidden; /* Hide overflow for decorative elements */
-}
-
-.header-title {
-  font-size: 2.8rem; /* Larger, bolder title */
-  font-weight: 800; /* Extra bold */
-  margin: 0;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-  letter-spacing: 0.05em; /* Slightly spaced out letters */
-  position: relative;
-  z-index: 2; /* Ensure text is above any decorative elements */
-}
-
-.header-tagline {
-  font-size: 1rem;
-  margin-top: 0.5rem;
-  opacity: 0.9;
-  position: relative;
+  overflow: hidden;
   z-index: 2;
 }
 
-/* Decorative background elements for header */
-.app-header::before,
-.app-header::after {
+.app-header::before {
   content: '';
   position: absolute;
-  background: rgba(255, 255, 255, 0.1); /* Subtle white overlay for texture */
-  border-radius: 50%;
-  opacity: 0.6;
-  filter: blur(10px);
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 3s ease-in-out infinite;
   z-index: 1;
 }
 
-.app-header::before {
-  width: 150px;
-  height: 150px;
-  top: -50px;
-  left: -50px;
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-.app-header::after {
-  width: 200px;
-  height: 200px;
-  bottom: -80px;
-  right: -80px;
+@keyframes shimmer {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.header-title {
+  font-size: 3.2rem;
+  font-weight: 900;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(45deg, #fff, #f8f9fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-tagline {
+  font-size: 1.1rem;
+  margin-top: 0.8rem;
+  opacity: 0.95;
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
 }
 
 /* Content wrapper for cards */
 .content-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem; /* More space between cards */
+  gap: 3rem;
   width: 100%;
-  max-width: 720px; /* Increased max-width for content */
-  margin: -30px auto 0 auto; /* Adjusted negative margin to prevent overlap */
+  max-width: 750px;
+  margin: -40px auto 0 auto;
   padding: 0 1.5rem;
   position: relative;
-  z-index: 10; /* Ensure content is above background */
+  z-index: 10;
 }
 
 /* Common card styling */
 .card {
-  background-color: white;
-  border-radius: 18px; /* More rounded cards */
-  padding: 2.5rem; /* More generous padding */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Deeper, softer shadow */
-  border: none; /* Remove subtle border */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 2.8rem;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 1px 0px rgba(255, 255, 255, 0.2) inset;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: left 0.5s ease;
+}
+
+.card:hover::before {
+  left: 100%;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Slight lift on hover */
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 1px 0px rgba(255, 255, 255, 0.3) inset;
 }
 
 .card-title {
-  font-size: 1.6rem; /* Larger card titles */
-  font-weight: 700;
-  color: #2C3E50;
-  margin-bottom: 1.8rem; /* More space below title */
-  text-align: center; /* Center card titles */
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.card-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 2px;
 }
 
 /* Form styling */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem; /* More space between form elements */
+  gap: 1.5rem;
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.8rem;
 }
 
 .input-label {
-  font-size: 0.9rem;
-  color: #7F8C8D;
-  margin-bottom: 0.2rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .input-field {
-  padding: 1rem 1.2rem; /* Larger padding for inputs */
-  font-size: 1.05rem;
-  border: 2px solid #E0E0E0; /* Softer border */
-  border-radius: 10px; /* More rounded */
+  padding: 1.2rem 1.5rem;
+  font-size: 1.1rem;
+  border: 2px solid rgba(102, 126, 234, 0.2);
+  border-radius: 16px;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
 }
 
 .input-field:focus {
-  border-color: #3498DB;
-  box-shadow: 0 0 12px rgba(52, 152, 219, 0.2); /* Enhanced shadow on focus */
-}
-
-.date-input {
-  /* Specific styles for date input if needed */
+  border-color: #667eea;
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px);
 }
 
 .btn-primary {
-  background: linear-gradient(to right, #3498DB, #2980B9); /* Gradient for primary button */
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
-  padding: 1.1rem 0; /* More padding */
-  font-size: 1.15rem;
-  border-radius: 10px;
+  padding: 1.3rem 0;
+  font-size: 1.2rem;
+  border-radius: 16px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+  transition: all 0.3s ease;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem; /* Space between text and icon */
+  gap: 0.8rem;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-primary i {
-  font-size: 1.2em;
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(to right, #2980B9, #3498DB); /* Reverse gradient on hover */
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
 }
+
 .btn-primary:active {
-  transform: translateY(0);
-  box-shadow: none;
+  transform: translateY(-1px);
 }
 
 /* Task list styling */
 .task-list {
   list-style: none;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   padding: 0;
 }
 
 .task-item {
-  background-color: #FDFDFD; /* Very subtle background for task items */
-  border: 1px solid #EAEAEA; /* Very light border */
-  border-radius: 12px; /* Consistent rounded corners */
-  padding: 1.2rem 1.8rem; /* Generous padding */
-  margin-bottom: 1rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow for items */
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.task-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+}
+
+.task-item:hover::before {
+  width: 8px;
 }
 
 .task-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  background-color: #F8FCFE; /* Slightly lighter on hover */
+  transform: translateY(-5px) translateX(8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
 }
 
 .task-details {
   display: flex;
-  align-items: flex-start; /* Align content to the top of task item */
-  gap: 1.2rem;
+  align-items: flex-start;
+  gap: 1.5rem;
   flex-grow: 1;
 }
 
 .task-checkbox {
-  width: 24px; /* Larger checkbox */
-  height: 24px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  accent-color: #3498DB;
-  border: 2px solid #BDC3C7;
-  border-radius: 6px; /* Slightly more square/modern checkbox */
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-  min-width: 24px; /* Prevent shrinking */
-  min-height: 24px;
+  accent-color: #667eea;
+  border: 3px solid #dee2e6;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  min-width: 28px;
+  min-height: 28px;
+  position: relative;
 }
 
 .task-checkbox:checked {
-  border-color: #3498DB;
-  background-color: #3498DB; /* Solid background when checked */
+  border-color: #667eea;
+  background-color: #667eea;
+  transform: scale(1.1);
+}
+
+.task-checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .task-content-display {
   flex-grow: 1;
   display: flex;
-  flex-direction: column; /* Stack title and deadline vertically */
-  gap: 0.3rem; /* Small gap between title and deadline */
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .task-title-main {
-  font-weight: 600; /* Bolder title */
-  font-size: 1.15rem; /* Larger font */
-  color: #333333;
-  line-height: 1.4; /* Better readability */
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #2d3748;
+  line-height: 1.4;
+  transition: all 0.3s ease;
 }
 
 .task-title-done {
   text-decoration: line-through;
-  color: #95A5A6;
-  font-style: normal; /* No italic for done tasks */
-  opacity: 0.8;
+  color: #a0aec0;
+  opacity: 0.7;
+  transform: scale(0.98);
 }
 
 .task-deadline-info {
-  font-size: 0.88rem;
-  color: #7F8C8D;
+  font-size: 0.9rem;
+  color: #718096;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  font-weight: 500;
 }
 
 .task-deadline-info .task-icon {
-  font-size: 0.9em;
-  color: #7F8C8D;
+  font-size: 1em;
+  color: #667eea;
 }
 
 .task-actions-group {
   display: flex;
   flex-direction: row;
-  gap: 0.8rem; /* More space between action buttons */
-  margin-left: 1rem; /* Push actions slightly from content */
+  gap: 0.5rem;
+  margin-left: 1rem;
 }
 
 .btn-icon {
-  background: #F0F0F0; /* Light gray background for icons */
-  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(102, 126, 234, 0.2);
   cursor: pointer;
-  font-size: 1rem; /* Consistent icon size */
-  color: #7F8C8D;
-  padding: 0.8rem; /* Larger touch/click area */
-  border-radius: 8px; /* Rounded icon buttons */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  font-size: 1rem;
+  color: #667eea;
+  padding: 0.8rem;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
+
+.btn-icon::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  z-index: -1;
 }
 
 .btn-icon:hover {
-  background-color: #E5E5E5;
-  color: #3498DB; /* Blue on hover */
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: transparent;
 }
-.btn-icon:active {
-  transform: translateY(0);
+
+.btn-edit::before {
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
 }
 
 .btn-edit:hover {
-  background-color: #d1ecf1; /* Light teal for edit hover */
-  color: #1a718f;
+  color: white;
+}
+
+.btn-edit:hover::before {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 12px;
+}
+
+.btn-delete::before {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
 }
 
 .btn-delete:hover {
-  background-color: #f8d7da; /* Light red for delete hover */
-  color: #721c24;
+  color: white;
+}
+
+.btn-delete:hover::before {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 12px;
 }
 
 /* Edit mode specific styles */
 .edit-mode {
   display: flex;
-  flex-direction: column; /* Stack input and buttons vertically for better flow */
-  gap: 0.8rem;
+  flex-direction: column;
+  gap: 1rem;
   flex-grow: 1;
-  width: 100%; /* Ensure edit mode takes full width */
-}
-
-.input-edit-task {
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  border: 2px solid #BDC3C7;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
 }
 
+.input-edit-task {
+  padding: 1rem 1.3rem;
+  font-size: 1.05rem;
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+}
+
 .input-edit-task:focus {
-  border-color: #3498DB;
-  box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+  border-color: #667eea;
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
 }
 
 .edit-actions {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.8rem;
   width: 100%;
 }
 
 .btn-save, .btn-cancel {
-  flex-grow: 1; /* Make buttons expand to fill space */
-  padding: 0.8rem 1.2rem;
-  font-size: 0.95rem;
+  flex-grow: 1;
+  padding: 0.9rem 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-save {
-  background-color: #2ECC71; /* Green */
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
   color: white;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
 }
+
 .btn-save:hover {
-  background-color: #27AE60;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
 }
 
 .btn-cancel {
-  background-color: #E74C3C; /* Red */
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
   color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
+
 .btn-cancel:hover {
-  background-color: #C0392B;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
 /* Message for no tasks */
 .no-task-message {
   text-align: center;
-  color: #95A5A6;
+  color: #a0aec0;
   font-style: italic;
-  margin-top: 2rem;
-  font-size: 1rem;
-  padding: 0 1rem;
+  margin-top: 2.5rem;
+  font-size: 1.1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  border-radius: 16px;
+  border: 1px dashed rgba(160, 174, 192, 0.3);
 }
 
 /* Loading overlay and spinner styling */
@@ -633,29 +788,29 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.9); /* More opaque overlay */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  backdrop-filter: blur(5px); /* Subtle blur effect */
 }
 
 .spinner {
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #3498db;
+  border: 4px solid rgba(102, 126, 234, 0.2);
+  border-top: 4px solid #667eea;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   animation: spin 1s linear infinite;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .loading-text {
-  color: #333;
-  font-size: 1.1rem;
-  font-weight: 500;
+  color: #667eea;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 @keyframes spin {
@@ -672,63 +827,115 @@ export default {
 .btn-save:disabled,
 .btn-cancel:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
-  filter: grayscale(50%); /* Subtle grayscale effect */
-  background-color: #F0F0F0;
+  opacity: 0.5;
+  filter: grayscale(70%);
+  transform: none;
   box-shadow: none;
-  transform: none; /* Remove hover transform */
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .app-header {
-    padding: 2rem 1.5rem;
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
+    padding: 2.5rem 1.5rem 3.5rem 1.5rem;
+    border-bottom-left-radius: 2.5rem;
+    border-bottom-right-radius: 2.5rem;
   }
   .header-title {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
   }
   .header-tagline {
     font-size: 1rem;
   }
   .content-wrapper {
-    margin-top: -30px;
+    margin-top: -35px;
     padding: 0 1rem;
-    gap: 2rem;
+    gap: 2.5rem;
   }
   .card {
-    padding: 1.8rem;
-    border-radius: 15px;
+    padding: 2rem;
+    border-radius: 20px;
   }
   .card-title {
-    font-size: 1.4rem;
-    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1.8rem;
   }
   .input-field, .btn-primary {
-    padding: 0.9rem 1rem;
-    font-size: 1rem;
+    padding: 1rem 1.2rem;
+    font-size: 1.05rem;
   }
   .task-item {
-    padding: 1rem 1.2rem;
-    flex-direction: column; /* Stack content and actions vertically */
+    padding: 1.2rem 1.5rem;
+    flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 1.2rem;
   }
   .task-details {
     width: 100%;
   }
   .task-actions-group {
     width: 100%;
-    justify-content: flex-end; /* Align actions to the right */
+    justify-content: flex-end;
     margin-left: 0;
   }
   .task-checkbox {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+  }
+  .task-title-main {
+    font-size: 1.1rem;
+  }
+  .task-deadline-info {
+    font-size: 0.85rem;
+  }
+  .btn-icon {
+    font-size: 0.95rem;
+    padding: 0.7rem;
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 2rem 1rem 3rem 1rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+  }
+  .header-title {
+    font-size: 2rem;
+  }
+  .header-tagline {
+    font-size: 0.95rem;
+  }
+  .content-wrapper {
+    margin-top: -25px;
+    padding: 0 0.8rem;
+    gap: 2rem;
+  }
+  .card {
+    padding: 1.8rem;
+    border-radius: 18px;
+  }
+  .card-title {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+  }
+  .input-field {
+    padding: 0.9rem 1.1rem;
+    font-size: 1rem;
+  }
+  .btn-primary {
+    padding: 1rem 0;
+    font-size: 1.05rem;
+  }
+  .task-item {
+    padding: 1rem 1.2rem;
+    gap: 1rem;
+  }
+  .task-details {
+    gap: 1rem;
   }
   .task-title-main {
     font-size: 1.05rem;
@@ -737,72 +944,10 @@ export default {
     font-size: 0.8rem;
   }
   .btn-icon {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     padding: 0.6rem;
-  }
-  .edit-mode {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  .input-edit-task, .edit-actions {
-    width: 100%;
-  }
-  .btn-save, .btn-cancel {
-    font-size: 0.85rem;
-    padding: 0.7rem 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .app-header {
-    padding: 1.5rem 1rem;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-  }
-  .header-title {
-    font-size: 1.8rem;
-  }
-  .header-tagline {
-    font-size: 0.9rem;
-  }
-  .content-wrapper {
-    margin-top: -20px;
-    padding: 0 0.8rem;
-    gap: 1.8rem;
-  }
-  .card {
-    padding: 1.5rem;
-    border-radius: 12px;
-  }
-  .card-title {
-    font-size: 1.2rem;
-    margin-bottom: 1.2rem;
-  }
-  .input-field {
-    padding: 0.8rem 1rem;
-    font-size: 0.95rem;
-  }
-  .btn-primary {
-    padding: 0.9rem 0;
-    font-size: 1rem;
-  }
-  .task-item {
-    padding: 0.8rem 1rem;
-    gap: 0.8rem;
-  }
-  .task-details {
-    gap: 0.8rem;
-  }
-  .task-title-main {
-    font-size: 1rem;
-  }
-  .task-deadline-info {
-    font-size: 0.75rem;
-  }
-  .btn-icon {
-    font-size: 0.9rem;
-    padding: 0.5rem;
+    width: 32px;
+    height: 32px;
   }
 }
 </style>
