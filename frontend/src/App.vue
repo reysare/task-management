@@ -464,7 +464,7 @@ export default {
 }
 
 /* Refined floating shapes */
-.animated-bg {
+/* .animated-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -483,28 +483,28 @@ export default {
 .shape {
   position: absolute;
   background: rgba(173, 216, 230, 0.5); /* Light blue, slightly transparent */
-  border-radius: 50%;
+  /* border-radius: 50%;
   animation: gentleFloat 25s infinite linear;
   filter: blur(1px);
-}
+} */
 
-.shape-1 {
+/* .shape-1 {
   width: 120px;
   height: 120px;
   top: 15%;
   left: 8%;
   animation-delay: 0s;
-}
+} */
 
-.shape-2 {
+/* .shape-2 {
   width: 80px;
   height: 80px;
   top: 65%;
   left: 75%;
   animation-delay: -8s;
-}
+} */
 
-.shape-3 {
+/* .shape-3 {
   width: 140px;
   height: 140px;
   top: 75%;
@@ -526,9 +526,9 @@ export default {
   top: 5%;
   left: 55%;
   animation-delay: -6s;
-}
+} */
 
-@keyframes gentleFloat {
+/* @keyframes gentleFloat {
   0% {
     transform: translateY(0px) rotate(0deg);
     opacity: 0.4;
@@ -549,15 +549,16 @@ export default {
     transform: translateY(0px) rotate(360deg);
     opacity: 0.4;
   }
-}
+} */
 
 /* Refined glassmorphism header */
 .app-header {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(25px);
   border: 1px solid rgba(227, 242, 253, 0.5);
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
-  margin: 16px 16px 0 16px;
+  border-radius: var(--border-radius); /* Changed to full border-radius */
+  margin: 16px auto 0; /* Centered horizontally */
+  max-width: 780px; /* Added max-width to align with content-wrapper */
   padding: 1.8rem;
   position: relative;
   z-index: 10;
@@ -803,22 +804,6 @@ export default {
   color: transparent;
 }
 
-.input-field:focus {
-  border-color: #90caf9; /* Lighter blue on focus */
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.floating-label {
-  position: absolute;
-  left: 0.9rem;
-  top: 0.9rem;
-  font-size: 0.85rem;
-  color: #666;
-  transition: all 0.3s ease;
-  pointer-events: none;
-  font-weight: 500;
-}
-
 .input-field:focus + .floating-label,
 .input-field:not(:placeholder-shown) + .floating-label {
   top: 0.25rem;
@@ -1044,7 +1029,7 @@ export default {
   width: 12px;
   height: 12px;
   background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3,6 5,6 21,6'%3E%3C/polyline%3E%3Cpath d='M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E")
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3,6 5,6 21,6'%3E%3C/polyline%3E%3Cpath d='M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6'%3E%3C/path%3E%3C/svg%3E")
     no-repeat center;
   mask-size: contain;
 }
@@ -1159,7 +1144,7 @@ export default {
 /* Responsive design */
 @media (max-width: 768px) {
   .app-header {
-    margin: 8px;
+    margin: 8px auto 0; /* Centered horizontally for smaller screens */
     padding: 1.2rem;
   }
 
