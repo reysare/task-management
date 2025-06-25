@@ -362,18 +362,18 @@ export default {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Root variables for consistency */
+/* Root variables updated for softer blues */
 :root {
   --primary-gradient: linear-gradient(135deg, #6a8cff 0%, #4d7dff 100%);
   --secondary-gradient: linear-gradient(135deg, #8ab1ff 0%, #6a8cff 100%);
   --success-gradient: linear-gradient(135deg, #4facfe 0%, #00d2ff 100%);
   --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-bg: rgba(255, 255, 255, 0.95);
+  --glass-border: rgba(106, 140, 255, 0.15);
   --text-primary: #2d3748;
   --text-secondary: #4a5568;
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.12);
+  --shadow-soft: 0 10px 30px rgba(106, 140, 255, 0.08);
+  --shadow-hover: 0 15px 40px rgba(106, 140, 255, 0.12);
   --border-radius: 16px;
 }
 
@@ -383,16 +383,16 @@ export default {
   box-sizing: border-box;
 }
 
-/* Main layout with animated background */
+/* Main layout with softer background */
 .main-layout {
   min-height: 100vh;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, #f0f5ff 0%, #e6f0ff 100%);
+  background: linear-gradient(135deg, #f8faff 0%, #e6f0ff 100%);
   position: relative;
   overflow-x: hidden;
 }
 
-/* Animated floating shapes */
+/* Animated floating shapes - made more subtle */
 .animated-bg {
   position: fixed;
   top: 0;
@@ -411,58 +411,18 @@ export default {
 
 .shape {
   position: absolute;
-  background: rgba(106, 140, 255, 0.1);
+  background: rgba(106, 140, 255, 0.08);
   border-radius: 50%;
   animation: float 20s infinite linear;
 }
 
-.shape-1 {
-  width: 80px;
-  height: 80px;
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.shape-2 {
-  width: 60px;
-  height: 60px;
-  top: 60%;
-  left: 80%;
-  animation-delay: -5s;
-}
-
-.shape-3 {
-  width: 100px;
-  height: 100px;
-  top: 80%;
-  left: 20%;
-  animation-delay: -10s;
-}
-
-.shape-4 {
-  width: 40px;
-  height: 40px;
-  top: 40%;
-  left: 70%;
-  animation-delay: -15s;
-}
-
-.shape-5 {
-  width: 120px;
-  height: 120px;
-  top: 10%;
-  left: 60%;
-  animation-delay: -7s;
-}
-
 @keyframes float {
-  0% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
-  50% { transform: translateY(-20px) rotate(180deg); opacity: 0.3; }
-  100% { transform: translateY(0px) rotate(360deg); opacity: 0.7; }
+  0% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 0.2; }
+  100% { transform: translateY(0px) rotate(360deg); opacity: 0.5; }
 }
 
-/* Glassmorphism header */
+/* Header with better contrast */
 .app-header {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -473,11 +433,11 @@ export default {
   position: relative;
   z-index: 10;
   box-shadow: var(--shadow-soft);
+  color: var(--text-primary);
 }
 
 .header-content {
   text-align: center;
-  color: #2d3748;
   position: relative;
   z-index: 2;
 }
@@ -507,7 +467,7 @@ export default {
   font-size: 2.5rem;
   font-weight: 700;
   margin: 0;
-  color: #2d3748;
+  color: var(--text-primary);
 }
 
 .header-tagline {
@@ -515,55 +475,10 @@ export default {
   opacity: 0.8;
   margin: 0;
   font-weight: 400;
-  color: #4a5568;
+  color: var(--text-secondary);
 }
 
-.header-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.deco-circle {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(106, 140, 255, 0.1);
-  animation: pulse 4s ease-in-out infinite;
-}
-
-.deco-1 {
-  width: 100px;
-  height: 100px;
-  top: -50px;
-  right: -30px;
-  animation-delay: 0s;
-}
-
-.deco-2 {
-  width: 60px;
-  height: 60px;
-  bottom: -20px;
-  left: -20px;
-  animation-delay: 1s;
-}
-
-.deco-3 {
-  width: 80px;
-  height: 80px;
-  top: 50%;
-  left: -40px;
-  animation-delay: 2s;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50% { transform: scale(1.1); opacity: 0.6; }
-}
-
-/* Modern loading overlay */
+/* Loading overlay */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -596,22 +511,6 @@ export default {
   animation: modernSpin 1.5s linear infinite;
 }
 
-.spinner-ring:nth-child(2) {
-  width: 60px;
-  height: 60px;
-  top: 10px;
-  left: 10px;
-  animation-delay: -0.5s;
-}
-
-.spinner-ring:nth-child(3) {
-  width: 40px;
-  height: 40px;
-  top: 20px;
-  left: 20px;
-  animation-delay: -1s;
-}
-
 @keyframes modernSpin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -633,7 +532,7 @@ export default {
   z-index: 10;
 }
 
-/* Modern card styling */
+/* Cards with better contrast */
 .card {
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -658,6 +557,7 @@ export default {
   position: relative;
 }
 
+/* Improved icon visibility */
 .card-icon {
   width: 40px;
   height: 40px;
@@ -666,7 +566,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: white !important;
   font-size: 1.2rem;
   box-shadow: 0 4px 15px rgba(106, 140, 255, 0.3);
 }
@@ -674,7 +574,7 @@ export default {
 .card-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--text-primary);
   margin: 0;
   flex-grow: 1;
 }
@@ -707,7 +607,7 @@ export default {
   }
 }
 
-/* Floating input design */
+/* Input fields with better visibility */
 .floating-input {
   position: relative;
 }
@@ -715,10 +615,10 @@ export default {
 .input-field {
   width: 100%;
   padding: 1.2rem 1rem 0.8rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(106, 140, 255, 0.2);
   border-radius: 12px;
-  color: #2d3748;
+  color: var(--text-primary);
   font-size: 1rem;
   font-weight: 500;
   outline: none;
@@ -731,7 +631,7 @@ export default {
 
 .input-field:focus {
   border-color: rgba(106, 140, 255, 0.6);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.98);
 }
 
 .floating-label {
@@ -739,7 +639,7 @@ export default {
   left: 1rem;
   top: 1rem;
   font-size: 0.9rem;
-  color: #718096;
+  color: var(--text-secondary);
   transition: all 0.3s ease;
   pointer-events: none;
   font-weight: 500;
@@ -749,7 +649,7 @@ export default {
 .input-field:not(:placeholder-shown) + .floating-label {
   top: 0.3rem;
   font-size: 0.75rem;
-  color: #4a5568;
+  color: var(--text-primary);
 }
 
 .input-highlight {
@@ -766,7 +666,7 @@ export default {
   width: 100%;
 }
 
-/* Futuristic button */
+/* Improved button visibility */
 .btn-primary {
   width: 100%;
   padding: 1.2rem;
@@ -825,9 +725,10 @@ export default {
   position: relative;
   z-index: 2;
   font-size: 1.1rem;
+  color: white !important;
 }
 
-/* Task grid layout */
+/* Task items with better contrast */
 .task-container {
   margin-top: 1rem;
 }
@@ -838,8 +739,8 @@ export default {
 }
 
 .task-item {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(106, 140, 255, 0.2);
+  background: var(--glass-bg);
+  border: 1px solid rgba(106, 140, 255, 0.1);
   border-radius: 12px;
   padding: 1.5rem;
   position: relative;
@@ -874,6 +775,7 @@ export default {
   margin-bottom: 1rem;
 }
 
+/* Improved checkbox visibility */
 .custom-checkbox {
   position: relative;
 }
@@ -886,8 +788,8 @@ export default {
   display: block;
   width: 24px;
   height: 24px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 2px solid rgba(106, 140, 255, 0.4);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(106, 140, 255, 0.6);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -914,6 +816,7 @@ export default {
   transform: translate(-50%, -50%) scale(1);
 }
 
+/* Improved action buttons visibility */
 .task-actions {
   display: flex;
   gap: 0.5rem;
@@ -931,7 +834,7 @@ export default {
   transition: all 0.3s ease;
   font-size: 0.9rem;
   background: rgba(106, 140, 255, 0.1);
-  color: #4a7dff;
+  color: #4a7dff !important;
 }
 
 .action-btn:hover {
@@ -939,17 +842,17 @@ export default {
   transform: scale(1.1);
 }
 
-.delete-btn {
+.action-btn.delete-btn {
   background: rgba(255, 107, 107, 0.1);
-  color: #ff6b6b;
+  color: #ff6b6b !important;
 }
 
-.delete-btn:hover {
+.action-btn.delete-btn:hover {
   background: rgba(255, 107, 107, 0.2);
 }
 
 .task-body {
-  color: #2d3748;
+  color: var(--text-primary);
 }
 
 .task-title {
@@ -962,7 +865,7 @@ export default {
 .task-title.completed {
   text-decoration: line-through;
   opacity: 0.6;
-  color: #718096;
+  color: var(--text-secondary);
 }
 
 .task-meta {
@@ -975,11 +878,11 @@ export default {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(106, 140, 255, 0.1);
+  background: rgba(106, 140, 255, 0.08);
   padding: 0.3rem 0.8rem;
   border-radius: 12px;
   font-size: 0.8rem;
-  color: #4a5568;
+  color: var(--text-secondary);
 }
 
 /* Edit mode styling */
@@ -1021,7 +924,7 @@ export default {
 
 .btn-cancel {
   background: rgba(106, 140, 255, 0.1);
-  color: #4a5568;
+  color: var(--text-secondary);
 }
 
 .btn-cancel:hover {
@@ -1032,7 +935,7 @@ export default {
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: #4a5568;
+  color: var(--text-secondary);
 }
 
 .empty-icon {
@@ -1046,12 +949,17 @@ export default {
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #2d3748;
+  color: var(--text-primary);
 }
 
 .empty-subtitle {
   opacity: 0.8;
   font-size: 1rem;
+}
+
+/* Ensure all icons are visible */
+.fas, .far {
+  color: inherit !important;
 }
 
 /* Responsive design */
