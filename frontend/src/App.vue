@@ -195,7 +195,7 @@ export default {
           title: this.newTask,
           deadline: this.newDeadline,
           is_done: false,
-          created_at: new Date(),
+          created_at: new Date(), // Add a timestamp for potential ordering/sorting
         });
         this.newTask = "";
         this.newDeadline = "";
@@ -206,7 +206,7 @@ export default {
     },
 
     async deleteTask(id) {
-      if (!id) return;
+      if (!id) return; // Ensure ID exists
 
       try {
         await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
@@ -221,7 +221,7 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          is_done: !task.is_done,
+          is_done: !task.is_done, // Toggle the 'is_done' status
         });
         console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
@@ -244,7 +244,7 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          title: this.editedTaskTitle,
+          title: this.editedTaskTitle, // Update only the title
         });
         this.editingTaskId = null;
         this.editedTaskTitle = "";
@@ -273,7 +273,7 @@ export default {
 .app-header {
   background: linear-gradient(to right top, #6DD5ED, #2193B0); /* Fresh blue-teal gradient */
   width: 100%;
-  padding: 2.5rem 2rem; /* More vertical padding */
+  padding: 2.5rem 2rem 3rem 2rem; /* Increased padding-bottom to prevent overlap */
   color: white;
   text-align: center; /* Center align header text */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Softer, wider shadow */
@@ -334,7 +334,7 @@ export default {
   gap: 2.5rem; /* More space between cards */
   width: 100%;
   max-width: 720px; /* Increased max-width for content */
-  margin: -50px auto 0 auto; /* Pull cards slightly over the header curve */
+  margin: -30px auto 0 auto; /* Adjusted negative margin to prevent overlap */
   padding: 0 1.5rem;
   position: relative;
   z-index: 10; /* Ensure content is above background */
