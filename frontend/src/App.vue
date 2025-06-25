@@ -3,11 +3,16 @@
   <div class="main-layout">
     <!-- Header section for the application title, now truly full width and enhanced visually -->
     <header class="app-header">
-      <h1 class="header-title">To Do List</h1>
+      <h1 class="header-title">Daily Life Tasks</h1>
     </header>
 
     <!-- Wrapper for the two main content cards: Add Task and Task List, ensuring they are centered -->
     <div class="content-wrapper">
+      <!-- Loading indicator -->
+      <div v-if="isLoading" class="loading-indicator">
+        Memuat...
+      </div>
+
       <!-- Card for adding a new task -->
       <div class="card add-task-card">
         <h2 class="card-title">Tambahkan Tugas Baru</h2>
@@ -19,15 +24,17 @@
             type="text"
             placeholder="Judul Aktivitas"
             class="input"
+            :disabled="isLoading"
           />
           <!-- Input field for the deadline date -->
           <input
             v-model="newDeadline"
             type="date"
             class="input"
+            :disabled="isLoading"
           />
           <!-- Button to submit and add the new task -->
-          <button type="submit" class="btn-add">
+          <button type="submit" class="btn-add" :disabled="isLoading">
             Tambah Tugas
           </button>
         </form>
@@ -47,6 +54,7 @@
                 :checked="task.is_done"
                 @change="toggleDone(task)"
                 class="checkbox"
+                :disabled="isLoading"
               />
               <!-- Container for task title and deadline -->
               <div class="task-content">
@@ -56,10 +64,11 @@
                     v-model="editedTaskTitle"
                     type="text"
                     class="input-edit"
+                    :disabled="isLoading"
                   />
                   <div class="edit-buttons">
-                    <button @click="updateTask(task)" class="btn-save">Simpan</button>
-                    <button @click="cancelEdit" class="btn-cancel">Batal</button>
+                    <button @click="updateTask(task)" class="btn-save" :disabled="isLoading">Simpan</button>
+                    <button @click="cancelEdit" class="btn-cancel" :disabled="isLoading">Batal</button>
                   </div>
                 </div>
                 <!-- Conditional rendering: show task details if not in edit mode -->
@@ -84,6 +93,7 @@
                 @click="startEdit(task)"
                 class="btn-action btn-edit"
                 title="Edit tugas"
+                :disabled="isLoading"
               >
                 ✏️
               </button>
@@ -92,6 +102,7 @@
                 @click="deleteTask(task.id)"
                 class="btn-action btn-delete"
                 title="Hapus tugas"
+                :disabled="isLoading"
               >
                 🗑️
               </button>
@@ -106,93 +117,159 @@
 </template>
 
 <script>
-// Import the API utility for seamless backend communication
 import api from "@/api";
 
 export default {
-  // Data properties for the component's state
   data() {
     return {
-      tasks: [], // Array to hold all fetched tasks
-      newTask: "", // Binds to the input for new task title
-      newDeadline: "", // Binds to the input for new task deadline
-      editingTaskId: null, // Stores the ID of the task currently being edited
-      editedTaskTitle: "", // Binds to the input for editing task title
+      tasks: [],
+      newTask: "",
+      newDeadline: "",
+      editingTaskId: null,
+      editedTaskTitle: "",
+      isLoading: false, // New state for loading indicator
     };
   },
-  // Lifecycle hook: called after the component is mounted to the DOM
   mounted() {
-    this.fetchTasks(); // Fetch tasks immediately upon component load
+    this.fetchTasks();
   },
-  // Methods that handle component logic and interactions
   methods: {
-    // Fetches all tasks from the API
-    fetchTasks() {
-      api.get("/tasks")
-        .then((res) => (this.tasks = res.data)) // Update the tasks array with response data
-        .catch((err) => console.error("Gagal mengambil tugas:", err)); // Log error if fetching fails
+    async fetchTasks() {
+      this.isLoading = true; // Set loading to true before fetching
+      try {
+        const res = await api.get("/tasks");
+        this.tasks = res.data;
+      } catch (err) {
+        console.error("Gagal mengambil tugas:", err);
+        // Implement better user feedback for errors here (e.g., a toast notification)
+      } finally {
+        this.isLoading = false; // Set loading to false after fetching
+      }
     },
-    // Adds a new task to the list
-    addTask() {
-      // Validate inputs: title and deadline must not be empty
+    async addTask() {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
-      api.post("/tasks", {
+      const tempId = Date.now(); // Client-side temporary ID
+      const newTaskData = {
+        id: tempId, // Assign temporary ID
         title: this.newTask,
         deadline: this.newDeadline,
-      })
-        .then(() => {
-          this.newTask = ""; // Clear input field after successful addition
-          this.newDeadline = ""; // Clear deadline field
-          this.fetchTasks(); // Re-fetch tasks to display the newly added one
-        })
-        .catch((err) =>
-          console.error("Gagal menambahkan tugas:", err.response?.data || err.message) // Log error if addition fails
-        );
+        is_done: false, // Default for new tasks
+        isOptimistic: true // Mark as an optimistic update
+      };
+
+      // 1. Optimistic UI Update: Add task to array immediately
+      this.tasks.unshift(newTaskData); // Add to the beginning for immediate visibility
+
+      // Clear form inputs
+      this.newTask = "";
+      this.newDeadline = "";
+
+      this.isLoading = true; // Show loading for the actual network request
+      try {
+        const res = await api.post("/tasks", {
+          title: newTaskData.title,
+          deadline: newTaskData.deadline,
+        });
+
+        // 3. Update with real data: Replace temporary task with actual server data
+        const index = this.tasks.findIndex(task => task.id === tempId);
+        if (index !== -1) {
+          this.tasks.splice(index, 1, res.data); // Replace optimistic task with real one
+        }
+      } catch (err) {
+        console.error("Gagal menambahkan tugas:", err.response?.data || err.message);
+        // 4. Revert UI on error: Remove the optimistic task if API call fails
+        this.tasks = this.tasks.filter(task => task.id !== tempId);
+        // Provide user feedback (e.g., "Gagal menambahkan tugas. Coba lagi.")
+      } finally {
+        this.isLoading = false;
+      }
     },
-    // Deletes a task by its ID
-    deleteTask(id) {
-      api
-        .delete(`/tasks/${id}`)
-        .then(() => this.fetchTasks()) // Re-fetch tasks to update the list
-        .catch((err) => console.error("Gagal menghapus tugas:", err)); // Log error if deletion fails
+    async deleteTask(id) {
+      const originalTasks = [...this.tasks]; // Store original tasks for rollback
+      const taskToDelete = this.tasks.find(task => task.id === id);
+
+      // 1. Optimistic UI Update: Remove task from array immediately
+      this.tasks = this.tasks.filter(task => task.id !== id);
+
+      this.isLoading = true;
+      try {
+        await api.delete(`/tasks/${id}`);
+        // No need to re-fetch, UI is already updated
+      } catch (err) {
+        console.error("Gagal menghapus tugas:", err);
+        // 4. Revert UI on error: Add the task back if API call fails
+        this.tasks = originalTasks; // Rollback
+        // Provide user feedback (e.g., "Gagal menghapus tugas. Coba lagi.")
+      } finally {
+        this.isLoading = false;
+      }
     },
-    // Toggles the 'is_done' status of a task
-    toggleDone(task) {
-      api
-        .put(`/tasks/${task.id}`, {
-          is_done: !task.is_done, // Invert the current 'is_done' status
-        })
-        .then((res) => (task.is_done = res.data.is_done)) // Update the task's 'is_done' status
-        .catch((err) => console.error("Gagal memperbarui tugas:", err)); // Log error if update fails
+    async toggleDone(task) {
+      const originalIsDone = task.is_done; // Store original state for rollback
+      const originalTaskIndex = this.tasks.findIndex(t => t.id === task.id);
+
+      // 1. Optimistic UI Update: Toggle state immediately
+      task.is_done = !task.is_done;
+
+      this.isLoading = true;
+      try {
+        const res = await api.put(`/tasks/${task.id}`, {
+          is_done: task.is_done, // Send the new state
+        });
+        // Ensure the task's state is updated with the server's definitive response
+        // This is important if server-side logic might alter the state differently
+        task.is_done = res.data.is_done;
+      } catch (err) {
+        console.error("Gagal memperbarui status tugas:", err);
+        // 4. Revert UI on error: Revert to original state if API call fails
+        if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].is_done = originalIsDone;
+        }
+        // Provide user feedback
+      } finally {
+        this.isLoading = false;
+      }
     },
-    // Initiates the edit mode for a specific task
     startEdit(task) {
-      this.editingTaskId = task.id; // Set the ID of the task to be edited
-      this.editedTaskTitle = task.title; // Populate the edit input with the current title
+      this.editingTaskId = task.id;
+      this.editedTaskTitle = task.title;
     },
-    // Cancels the current edit operation
     cancelEdit() {
-      this.editingTaskId = null; // Exit edit mode
-      this.editedTaskTitle = ""; // Clear the edited title
+      this.editingTaskId = null;
+      this.editedTaskTitle = "";
     },
-    // Updates an existing task with the new title
-    updateTask(task) {
-      // Validate: edited title must not be empty
+    async updateTask(task) {
       if (!this.editedTaskTitle.trim()) return;
 
-      api
-        .put(`/tasks/${task.id}`, {
-          title: this.editedTaskTitle, // Use the new title from the edit input
-          deadline: task.deadline, // Keep original deadline
-          is_done: task.is_done, // Keep original 'is_done' status
-        })
-        .then(() => {
-          this.editingTaskId = null; // Exit edit mode
-          this.editedTaskTitle = ""; // Clear the edited title
-          this.fetchTasks(); // Re-fetch tasks to display the updated one
-        })
-        .catch((err) => console.error("Gagal memperbarui tugas:", err)); // Log error if update fails
+      const originalTitle = task.title; // Store original title for rollback
+      const originalTaskIndex = this.tasks.findIndex(t => t.id === task.id);
+
+      // 1. Optimistic UI Update: Update title immediately
+      task.title = this.editedTaskTitle;
+      this.editingTaskId = null; // Exit edit mode immediately
+      this.editedTaskTitle = ""; // Clear edited title
+
+      this.isLoading = true;
+      try {
+        const res = await api.put(`/tasks/${task.id}`, {
+          title: task.title, // Send the new title
+          deadline: task.deadline,
+          is_done: task.is_done,
+        });
+        // Ensure the task's title is updated with the server's definitive response
+        task.title = res.data.title;
+      } catch (err) {
+        console.error("Gagal memperbarui tugas:", err);
+        // 4. Revert UI on error: Revert to original title if API call fails
+        if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].title = originalTitle;
+        }
+        // Provide user feedback
+      } finally {
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -214,19 +291,19 @@ export default {
 .app-header {
   background: linear-gradient(to right, #3498DB, #2980B9); /* Gradient background for a more dynamic look */
   width: 100%; /* Full width header */
-  padding: 1rem 2.5rem; /* Increased vertical padding for more prominence */
+  padding: 1.8rem 2.5rem; /* Increased vertical padding for more prominence */
   color: white; /* White text for header elements */
   text-align: left; /* Align title to the left */
   box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Stronger, more noticeable shadow */
-  border-bottom-left-radius: 2px;
-  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 25px; /* Slightly larger radius for a smoother curve */
+  border-bottom-right-radius: 25px;
   display: flex; /* Use flexbox for vertical centering of title */
   align-items: center; /* Vertically center the title within the header */
 }
 
 /* Styling for the main title within the header */
 .header-title {
-  font-size: 2rem; /* Even larger and clearer font size */
+  font-size: 2.2rem; /* Even larger and clearer font size */
   font-weight: 700; /* Bold font weight */
   margin: 0; /* Removes default margin to prevent layout shifts */
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2); /* Subtle text shadow for depth */
@@ -242,6 +319,7 @@ export default {
   margin: 2.5rem auto 0 auto; /* Centered horizontally using auto margins */
   padding: 0 1.5rem; /* Horizontal padding for responsiveness */
   /* align-items: center; Dihapus karena margin auto sudah handle pemusatan */
+  position: relative; /* For positioning loading indicator */
 }
 
 /* Common styling for all content cards */
@@ -487,6 +565,35 @@ export default {
   margin-top: 1.5rem; /* Space above */
   font-size: 0.95rem; /* Clear font size */
 }
+
+/* Loading indicator styling */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 15px 30px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  z-index: 1000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  pointer-events: none; /* Allows clicks to pass through */
+}
+
+/* Styles for disabled elements when loading */
+.input:disabled,
+.btn-add:disabled,
+.checkbox:disabled,
+.btn-action:disabled,
+.input-edit:disabled,
+.btn-save:disabled,
+.btn-cancel:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
