@@ -44,8 +44,8 @@
       <!-- Card for displaying the list of tasks -->
       <div class="card task-list-card">
         <h2 class="card-title">Daftar Tugas Anda</h2>
-        <!-- Display userId for multi-user apps (as per instructions) -->
-        <p v-if="$userId" class="user-id-display">User ID: {{ $userId }}</p>
+        <!-- User ID display removed as per user request -->
+        <!-- <p v-if="$userId" class="user-id-display">User ID: {{ $userId }}</p> -->
 
         <!-- List of tasks, displayed only if there are tasks in the array -->
         <ul v-if="tasks.length" class="task-list">
@@ -82,7 +82,7 @@
                   </span>
                   <!-- Deadline with icon for better separation and styling -->
                   <span class="task-deadline">
-                    <i class="far fa-calendar-alt task-icon"></i>
+                    <i class="far fa-calendar-alt task-icon"></i> <!-- Icon for calendar, added task-icon class -->
                     {{ task.deadline }}
                   </span>
                 </div>
@@ -121,7 +121,6 @@
 </template>
 
 <script>
-// No longer importing 'api', using Firebase directly
 import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 export default {
@@ -132,7 +131,7 @@ export default {
       newDeadline: "",
       editingTaskId: null,
       editedTaskTitle: "",
-      isLoading: true, // Set to true initially as data fetch is asynchronous
+      isLoading: true, // State for global loading indicator (used for initial fetch)
       unsubscribe: null, // To store the onSnapshot unsubscribe function
     };
   },
@@ -166,12 +165,13 @@ export default {
     fetchTasksRealtime() {
       // Ensure db, appId, and userId are available
       if (!this.$db || !this.$appId || !this.$userId) {
-        console.warn("Firebase or user ID not available yet.");
+        console.warn("Firebase atau ID pengguna belum tersedia.");
         return;
       }
 
       this.isLoading = true; // Show loading spinner for the initial data load
 
+      // Construct the Firestore collection path using appId and userId
       const tasksCollectionRef = collection(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`);
       const q = query(tasksCollectionRef);
 
@@ -183,9 +183,9 @@ export default {
         });
         this.tasks = fetchedTasks;
         this.isLoading = false; // Hide loading spinner once data is loaded
-        console.log("Tasks fetched real-time:", this.tasks);
+        console.log("Tugas diambil secara real-time:", this.tasks);
       }, (error) => {
-        console.error("Error fetching tasks real-time:", error);
+        console.error("Error saat mengambil tugas real-time:", error);
         this.isLoading = false; // Hide loading on error
         // Provide user feedback for error
       });
@@ -200,15 +200,15 @@ export default {
           title: this.newTask,
           deadline: this.newDeadline,
           is_done: false,
-          created_at: new Date(), // Add a timestamp
+          created_at: new Date(), // Add a timestamp for potential ordering/sorting
         });
         // Clear form inputs immediately after initiating addDoc
         this.newTask = "";
         this.newDeadline = "";
-        console.log("Task added to Firestore.");
+        console.log("Tugas ditambahkan ke Firestore.");
       } catch (err) {
         console.error("Gagal menambahkan tugas:", err);
-        // Provide user feedback
+        // Provide user feedback (e.g., using a toast notification)
       }
     },
 
@@ -217,7 +217,7 @@ export default {
 
       try {
         await deleteDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id));
-        console.log(`Task with ID ${id} deleted.`);
+        console.log(`Tugas dengan ID ${id} dihapus.`);
       } catch (err) {
         console.error("Gagal menghapus tugas:", err);
         // Provide user feedback
@@ -229,9 +229,9 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          is_done: !task.is_done,
+          is_done: !task.is_done, // Toggle the 'is_done' status
         });
-        console.log(`Task with ID ${task.id} done status toggled.`);
+        console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
         // Provide user feedback
@@ -253,11 +253,11 @@ export default {
 
       try {
         await updateDoc(doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, task.id), {
-          title: this.editedTaskTitle,
+          title: this.editedTaskTitle, // Update only the title
         });
-        this.editingTaskId = null;
-        this.editedTaskTitle = "";
-        console.log(`Task with ID ${task.id} updated.`);
+        this.editingTaskId = null; // Exit edit mode
+        this.editedTaskTitle = ""; // Clear edited title
+        console.log(`Tugas dengan ID ${task.id} diperbarui.`);
       } catch (err) {
         console.error("Gagal memperbarui tugas:", err);
         // Provide user feedback
@@ -331,16 +331,16 @@ export default {
   text-align: left; /* Align card titles to the left */
 }
 
-/* User ID display */
-.user-id-display {
+/* User ID display - Removed as per user request */
+/* .user-id-display {
   font-size: 0.85rem;
   color: #555;
   text-align: center;
-  margin-top: -0.5rem; /* Adjust as needed */
-  margin-bottom: 1rem; /* Space below ID */
-  word-break: break-all; /* Break long IDs */
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  word-break: break-all;
   padding: 0 1rem;
-}
+} */
 
 
 /* Styling for the task input form */
