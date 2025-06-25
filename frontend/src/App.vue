@@ -127,7 +127,7 @@ export default {
       newDeadline: "",
       editingTaskId: null,
       editedTaskTitle: "",
-      isLoading: false, // New state for loading indicator
+      isLoading: false, // State for global loading indicator (used for initial fetch)
     };
   },
   mounted() {
@@ -135,7 +135,7 @@ export default {
   },
   methods: {
     async fetchTasks() {
-      this.isLoading = true; // Set loading to true before fetching
+      this.isLoading = true; // Set loading to true only for initial fetch
       try {
         const res = await api.get("/tasks");
         this.tasks = res.data;
@@ -143,7 +143,7 @@ export default {
         console.error("Gagal mengambil tugas:", err);
         // Implement better user feedback for errors here (e.g., a toast notification)
       } finally {
-        this.isLoading = false; // Set loading to false after fetching
+        this.isLoading = false; // Set loading to false after fetch
       }
     },
     async addTask() {
@@ -158,14 +158,14 @@ export default {
         isOptimistic: true // Mark as an optimistic update
       };
 
-      // 1. Optimistic UI Update: Add task to array immediately
+      // 1. Optimistic UI Update: Add task to array immediately for instant feedback
       this.tasks.unshift(newTaskData); // Add to the beginning for immediate visibility
 
-      // Clear form inputs
+      // Clear form inputs immediately
       this.newTask = "";
       this.newDeadline = "";
 
-      this.isLoading = true; // Show loading for the actual network request
+      // No global isLoading here, as UI is already updated optimistically
       try {
         const res = await api.post("/tasks", {
           title: newTaskData.title,
@@ -182,18 +182,16 @@ export default {
         // 4. Revert UI on error: Remove the optimistic task if API call fails
         this.tasks = this.tasks.filter(task => task.id !== tempId);
         // Provide user feedback (e.g., "Gagal menambahkan tugas. Coba lagi.")
-      } finally {
-        this.isLoading = false;
       }
+      // No finally block needed here, as isLoading is not managed for this operation
     },
     async deleteTask(id) {
       const originalTasks = [...this.tasks]; // Store original tasks for rollback
-      const taskToDelete = this.tasks.find(task => task.id === id);
-
+      
       // 1. Optimistic UI Update: Remove task from array immediately
       this.tasks = this.tasks.filter(task => task.id !== id);
 
-      this.isLoading = true;
+      // No global isLoading here
       try {
         await api.delete(`/tasks/${id}`);
         // No need to re-fetch, UI is already updated
@@ -202,25 +200,31 @@ export default {
         // 4. Revert UI on error: Add the task back if API call fails
         this.tasks = originalTasks; // Rollback
         // Provide user feedback (e.g., "Gagal menghapus tugas. Coba lagi.")
-      } finally {
-        this.isLoading = false;
       }
+      // No finally block needed here
     },
     async toggleDone(task) {
       const originalIsDone = task.is_done; // Store original state for rollback
       const originalTaskIndex = this.tasks.findIndex(t => t.id === task.id);
 
       // 1. Optimistic UI Update: Toggle state immediately
-      task.is_done = !task.is_done;
+      // Directly modify the task object reference in the array
+      if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].is_done = !this.tasks[originalTaskIndex].is_done;
+      }
+      
 
-      this.isLoading = true;
+      // No global isLoading here
       try {
         const res = await api.put(`/tasks/${task.id}`, {
           is_done: task.is_done, // Send the new state
         });
         // Ensure the task's state is updated with the server's definitive response
         // This is important if server-side logic might alter the state differently
-        task.is_done = res.data.is_done;
+        // If the task object was directly modified, this step confirms server state.
+        if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].is_done = res.data.is_done;
+        }
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
         // 4. Revert UI on error: Revert to original state if API call fails
@@ -228,9 +232,8 @@ export default {
           this.tasks[originalTaskIndex].is_done = originalIsDone;
         }
         // Provide user feedback
-      } finally {
-        this.isLoading = false;
       }
+      // No finally block needed here
     },
     startEdit(task) {
       this.editingTaskId = task.id;
@@ -247,19 +250,26 @@ export default {
       const originalTaskIndex = this.tasks.findIndex(t => t.id === task.id);
 
       // 1. Optimistic UI Update: Update title immediately
-      task.title = this.editedTaskTitle;
+      // Directly modify the task object reference in the array
+      if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].title = this.editedTaskTitle;
+      }
+      
       this.editingTaskId = null; // Exit edit mode immediately
       this.editedTaskTitle = ""; // Clear edited title
 
-      this.isLoading = true;
+      // No global isLoading here
       try {
         const res = await api.put(`/tasks/${task.id}`, {
-          title: task.title, // Send the new title
+          title: task.title, // Send the new title (already updated optimistically)
           deadline: task.deadline,
           is_done: task.is_done,
         });
         // Ensure the task's title is updated with the server's definitive response
-        task.title = res.data.title;
+        // If the task object was directly modified, this step confirms server state.
+        if (originalTaskIndex !== -1) {
+          this.tasks[originalTaskIndex].title = res.data.title;
+        }
       } catch (err) {
         console.error("Gagal memperbarui tugas:", err);
         // 4. Revert UI on error: Revert to original title if API call fails
@@ -267,9 +277,8 @@ export default {
           this.tasks[originalTaskIndex].title = originalTitle;
         }
         // Provide user feedback
-      } finally {
-        this.isLoading = false;
       }
+      // No finally block needed here
     },
   },
 };
