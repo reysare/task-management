@@ -462,107 +462,23 @@ export default {
   position: relative;
   overflow-x: hidden;
 }
-
-/* Refined floating shapes */
-/* .animated-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.floating-shapes {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.shape {
-  position: absolute;
-  background: rgba(173, 216, 230, 0.5); /* Light blue, slightly transparent */
-  /* border-radius: 50%;
-  animation: gentleFloat 25s infinite linear;
-  filter: blur(1px);
-} */
-
-/* .shape-1 {
-  width: 120px;
-  height: 120px;
-  top: 15%;
-  left: 8%;
-  animation-delay: 0s;
-} */
-
-/* .shape-2 {
-  width: 80px;
-  height: 80px;
-  top: 65%;
-  left: 75%;
-  animation-delay: -8s;
-} */
-
-/* .shape-3 {
-  width: 140px;
-  height: 140px;
-  top: 75%;
-  left: 15%;
-  animation-delay: -12s;
-}
-
-.shape-4 {
-  width: 60px;
-  height: 60px;
-  top: 35%;
-  left: 68%;
-  animation-delay: -18s;
-}
-
-.shape-5 {
-  width: 160px;
-  height: 160px;
-  top: 5%;
-  left: 55%;
-  animation-delay: -6s;
-} */
-
-/* @keyframes gentleFloat {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.4;
-  }
-  25% {
-    transform: translateY(-15px) rotate(90deg);
-    opacity: 0.6;
-  }
-  50% {
-    transform: translateY(-30px) rotate(180deg);
-    opacity: 0.3;
-  }
-  75% {
-    transform: translateY(-15px) rotate(270deg);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translateY(0px) rotate(360deg);
-    opacity: 0.4;
-  }
-} */
-
 /* Refined glassmorphism header */
 .app-header {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(25px);
-  border: 1px solid rgba(227, 242, 253, 0.5);
-  border-radius: var(--border-radius); /* Changed to full border-radius */
-  margin: 16px auto 0; /* Centered horizontally */
-  max-width: 780px; /* Added max-width to align with content-wrapper */
-  padding: 1.8rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(240, 248, 255, 0.8)
+  ); /* Softer gradient background */
+  backdrop-filter: blur(20px) saturate(150%); /* Increased blur and saturation */
+  border: 1px solid rgba(227, 242, 253, 0.7); /* Slightly stronger border */
+  border-radius: 20px; /* More rounded corners */
+  margin: 24px auto 0; /* Increased top margin for spacing */
+  max-width: 800px; /* Slightly wider header */
+  padding: 2rem 2.5rem; /* Increased padding */
   position: relative;
   z-index: 10;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Stronger, softer shadow */
+  overflow: hidden; /* Hide overflow from decorations */
 }
 
 .header-content {
@@ -570,29 +486,41 @@ export default {
   color: var(--text-primary);
   position: relative;
   z-index: 2;
+  display: flex; /* Use flexbox for alignment */
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center horizontally */
 }
 
 .logo-section {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  margin-bottom: 0.4rem;
+  gap: 1rem; /* Increased gap */
+  margin-bottom: 0.6rem; /* Increased margin */
+}
+
+.logo-icon {
+  font-size: 2.5rem; /* Larger icon */
+  color: #64b5f6; /* Blue color for the icon */
+  text-shadow: 0 2px 8px rgba(100, 181, 246, 0.4); /* Soft shadow for icon */
 }
 
 .header-title {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 2.5rem; /* Larger title */
+  font-weight: 700; /* Bolder title */
   margin: 0;
-  color: #333;
+  color: #222; /* Darker text for prominence */
+  letter-spacing: -0.03em; /* Tighter letter spacing */
 }
 
 .header-tagline {
-  font-size: 0.9rem;
-  opacity: 0.75;
+  font-size: 1rem; /* Slightly larger tagline */
+  opacity: 0.85; /* Slightly less opaque */
   margin: 0;
   font-weight: 400;
-  color: #666;
+  color: #555; /* Darker text for clarity */
+  max-width: 70%; /* Limit width for better readability */
+  line-height: 1.5;
 }
 
 .header-decoration {
