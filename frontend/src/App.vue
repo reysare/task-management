@@ -3,14 +3,15 @@
   <div class="main-layout">
     <!-- Header section for the application title, now truly full width and enhanced visually -->
     <header class="app-header">
-      <h1 class="header-title">Daily Life Tasks</h1>
+      <h1 class="header-title">To Do List</h1>
     </header>
 
     <!-- Wrapper for the two main content cards: Add Task and Task List, ensuring they are centered -->
     <div class="content-wrapper">
-      <!-- Loading indicator -->
-      <div v-if="isLoading" class="loading-indicator">
-        Memuat...
+      <!-- Loading indicator with spinner -->
+      <div v-if="isLoading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Memuat...</p>
       </div>
 
       <!-- Card for adding a new task -->
@@ -78,7 +79,7 @@
                   </span>
                   <!-- Deadline with icon for better separation and styling -->
                   <span class="task-deadline">
-                    <i class="far fa-calendar-alt"></i>
+                    <i class="far fa-calendar-alt task-icon"></i> <!-- Icon for calendar, added task-icon class -->
                     {{ task.deadline }}
                   </span>
                 </div>
@@ -300,19 +301,19 @@ export default {
 .app-header {
   background: linear-gradient(to right, #3498DB, #2980B9); /* Gradient background for a more dynamic look */
   width: 100%; /* Full width header */
-  padding: 1.8rem 2.5rem; /* Increased vertical padding for more prominence */
+  padding: 1rem 2.5rem; /* Increased vertical padding for more prominence */
   color: white; /* White text for header elements */
   text-align: left; /* Align title to the left */
   box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Stronger, more noticeable shadow */
-  border-bottom-left-radius: 25px; /* Slightly larger radius for a smoother curve */
-  border-bottom-right-radius: 25px;
+  border-bottom-left-radius: 2px; /* Slightly larger radius for a smoother curve */
+  border-bottom-right-radius: 2px;
   display: flex; /* Use flexbox for vertical centering of title */
   align-items: center; /* Vertically center the title within the header */
 }
 
 /* Styling for the main title within the header */
 .header-title {
-  font-size: 2.2rem; /* Even larger and clearer font size */
+  font-size: 2rem; /* Even larger and clearer font size */
   font-weight: 700; /* Bold font weight */
   margin: 0; /* Removes default margin to prevent layout shifts */
   text-shadow: 2px 2px 4px rgba(0,0,0,0.2); /* Subtle text shadow for depth */
@@ -327,7 +328,6 @@ export default {
   max-width: 650px; /* Slightly wider max-width for content cards */
   margin: 2.5rem auto 0 auto; /* Centered horizontally using auto margins */
   padding: 0 1.5rem; /* Horizontal padding for responsiveness */
-  /* align-items: center; Dihapus karena margin auto sudah handle pemusatan */
   position: relative; /* For positioning loading indicator */
 }
 
@@ -401,40 +401,44 @@ export default {
   padding: 0; /* Remove default padding */
 }
 
-/* Styling for individual task items */
+/* Styling for individual task items - ENHANCED */
 .task-item {
-  background-color: #ECF0F1; /* Very light gray background for tasks */
-  border: 1px solid #D5DBDB; /* Light gray border */
-  border-radius: 8px; /* Rounded corners */
-  padding: 1rem 1.2rem; /* Spacious padding inside task items */
+  background-color: #F8F8F8; /* Lighter background for tasks for better contrast */
+  border: 1px solid #E0E0E0; /* Consistent border with cards */
+  border-radius: 10px; /* Slightly more rounded corners for items */
+  padding: 1rem 1.5rem; /* Increased padding inside task items */
   margin-bottom: 0.8rem; /* Space between task items */
   display: flex;
   justify-content: space-between; /* Distribute content and actions */
   align-items: center; /* Vertically center content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
-  transition: transform 0.2s ease; /* Smooth hover effect */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08); /* More subtle and spread shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions for hover */
+  position: relative; /* For potential future enhancements */
 }
 .task-item:hover {
-  transform: translateY(-2px); /* Slight lift on hover */
+  transform: translateY(-3px); /* More pronounced lift on hover */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12); /* Stronger shadow on hover */
 }
 
 /* Left section of the task item (checkbox + content) */
 .task-left {
   display: flex;
   align-items: center; /* Vertically align checkbox and text */
-  gap: 1rem; /* Space between checkbox and text */
+  gap: 1.2rem; /* Increased space between checkbox and text */
   flex-grow: 1; /* Allows this section to take available space */
 }
 
 /* Custom styling for the checkbox */
 .checkbox {
-  width: 20px; /* Size of the checkbox */
-  height: 20px;
+  width: 22px; /* Slightly larger checkbox */
+  height: 22px;
   cursor: pointer; /* Pointer cursor */
   accent-color: #3498DB; /* Custom blue color when checked */
-  border: 2px solid #95A5A6; /* Slightly thicker border for clarity */
-  border-radius: 4px; /* Slightly rounded checkbox */
+  border: 2px solid #A0A0A0; /* Darker grey border for better visibility */
+  border-radius: 5px; /* Slightly more rounded checkbox */
   transition: border-color 0.2s ease;
+  min-width: 22px; /* Ensure checkbox doesn't shrink */
+  min-height: 22px;
 }
 .checkbox:checked {
   border-color: #3498DB;
@@ -445,15 +449,15 @@ export default {
   flex-grow: 1; /* Allows content to take remaining space */
   display: flex;
   flex-direction: column; /* Stack title and deadline vertically */
-  gap: 0.2rem; /* Reduced space between title and deadline */
+  gap: 0.3rem; /* Slightly increased space between title and deadline */
 }
 
 /* Styling for the task title */
 .task-title {
   margin: 0; /* Removes default margin */
-  font-weight: 500; /* Medium font weight */
-  font-size: 1.05rem; /* Clear font size */
-  color: #333333; /* Darker text color */
+  font-weight: 600; /* Bolder font weight for title */
+  font-size: 1.1rem; /* Slightly larger font size for task title */
+  color: #2C3E50; /* Darker, more prominent text color */
 }
 
 /* Styling for done tasks */
@@ -466,17 +470,17 @@ export default {
 /* Styling for the task deadline */
 .task-deadline {
   margin: 0; /* Removes default margin */
-  font-size: 0.85rem; /* Smaller font size */
+  font-size: 0.88rem; /* Slightly larger font size for deadline */
   color: #7F8C8D; /* Muted gray for deadline */
   display: flex; /* Use flexbox to align icon and text */
   align-items: center; /* Vertically center icon and text */
-  gap: 0.4rem; /* Space between icon and text */
+  gap: 0.5rem; /* Increased space between icon and text */
 }
 
 /* Style for the calendar icon */
-.task-deadline i {
-  font-size: 0.8em; /* Make icon slightly smaller than text */
-  color: #95A5A6; /* Match icon color to muted text */
+.task-deadline .task-icon { /* Specific class for icon in deadline */
+  font-size: 0.9em; /* Make icon slightly larger */
+  color: #7F8C8D; /* Match icon color to muted text */
 }
 
 
@@ -484,7 +488,7 @@ export default {
 .task-actions {
   display: flex;
   flex-direction: row; /* Buttons in a row */
-  gap: 0.4rem; /* Small space between buttons */
+  gap: 0.6rem; /* Increased space between buttons */
 }
 
 /* Common styling for action buttons (edit, delete, save, cancel) */
@@ -492,9 +496,9 @@ export default {
   background: none; /* No background */
   border: none; /* No border */
   cursor: pointer; /* Pointer cursor */
-  font-size: 1.15rem; /* Slightly larger icon size */
+  font-size: 1.25rem; /* Larger icon size */
   color: #7F8C8D; /* Muted gray for icons */
-  padding: 0.4rem; /* Padding around icons for larger click area */
+  padding: 0.5rem; /* Increased padding around icons for larger click area */
   transition: color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
   border-radius: 5px; /* Gently rounded */
 }
@@ -575,23 +579,38 @@ export default {
   font-size: 0.95rem; /* Clear font size */
 }
 
-/* Loading indicator styling */
-.loading-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 15px 30px;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  z-index: 1000;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  pointer-events: none; /* Allows clicks to pass through */
+/* NEW: Loading overlay and spinner styling */
+.loading-overlay {
+  position: fixed; /* Covers the entire viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white overlay */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Ensures it's on top of everything */
+}
+
+.spinner {
+  border: 6px solid #f3f3f3; /* Light grey base */
+  border-top: 6px solid #3498db; /* Blue top border */
+  border-radius: 50%; /* Makes it round */
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite; /* Spin animation */
+  margin-bottom: 15px; /* Space between spinner and text */
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Styles for disabled elements when loading */
+/* These styles will apply when isLoading is true */
 .input:disabled,
 .btn-add:disabled,
 .checkbox:disabled,
@@ -600,9 +619,10 @@ export default {
 .btn-save:disabled,
 .btn-cancel:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5; /* Slightly more opaque when disabled */
+  background-color: #E0E0E0; /* Light grey background for disabled inputs/buttons */
+  box-shadow: none; /* Remove shadow when disabled */
 }
-
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 768px) {
