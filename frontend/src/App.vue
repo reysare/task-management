@@ -1,6 +1,5 @@
 <template>
   <div class="main-layout">
-    <!-- Animated background -->
     <div class="animated-bg">
       <div class="floating-shapes">
         <div class="shape shape-1"></div>
@@ -11,28 +10,7 @@
       </div>
     </div>
 
-    <!-- Glassmorphism Header -->
-    <header class="app-header">
-      <div class="header-content">
-        <div class="logo-section">
-          <div class="logo-icon">
-            <i class="fas fa-seedling"></i>
-          </div>
-          <h1 class="header-title">Daily Flow</h1>
-        </div>
-        <p class="header-tagline">
-          Transform your daily routine into a masterpiece
-        </p>
-      </div>
-      <!-- <div class="header-decoration">
-        <div class="deco-circle deco-1"></div>
-        <div class="deco-circle deco-2"></div>
-        <div class="deco-circle deco-3"></div>
-      </div> -->
-    </header>
-
-    <!-- Loading overlay with modern spinner -->
-    <div v-if="isLoading" class="loading-overlay">
+    <div v-if="isLoadingAuth" class="loading-overlay">
       <div class="modern-spinner">
         <div class="spinner-ring"></div>
         <div class="spinner-ring"></div>
@@ -41,181 +19,117 @@
       <p class="loading-text">Synchronizing your universe...</p>
     </div>
 
-    <!-- Main content area -->
-    <div class="content-wrapper">
-      <!-- Futuristic Add Task Card -->
-      <div class="card add-task-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="fas fa-magic"></i>
-          </div>
-          <h2 class="card-title">Create New Task</h2>
-        </div>
-        <form @submit.prevent="addTask" class="form">
-          <div class="input-group">
-            <div class="floating-input">
-              <input
-                v-model="newTask"
-                type="text"
-                placeholder=" "
-                class="input-field"
-                :disabled="isLoading"
-                id="taskInput"
-              />
-              <label for="taskInput" class="floating-label"
-                >Add Your Task</label
-              >
-              <div class="input-highlight"></div>
-            </div>
-            <div class="floating-input">
-              <input
-                v-model="newDeadline"
-                type="date"
-                class="input-field date-input"
-                :disabled="isLoading"
-                id="deadlineInput"
-              />
-              <label for="deadlineInput" class="floating-label">Deadline</label>
-              <div class="input-highlight"></div>
-            </div>
-          </div>
-          <button type="submit" class="btn-primary" :disabled="isLoading">
-            <span class="btn-text">Add to List</span>
-            <div class="btn-icon">
-              <i class="fas fa-rocket"></i>
-            </div>
-            <div class="btn-shimmer"></div>
-          </button>
-        </form>
-      </div>
+    <template v-else>
+      <router-view v-if="isAuthenticated"></router-view>
+      <router-view v-else name="auth"></router-view>
+    </template>
 
-      <!-- Sleek Task List Card -->
-      <div class="card task-list-card">
-        <div class="card-header">
-          <div class="card-icon">
-            <i class="fas fa-list-ul"></i>
-          </div>
-          <h2 class="card-title">Your Task List</h2>
-          <div class="task-counter" v-if="tasks.length">
-            {{ tasks.filter((t) => !t.is_done).length }} active
-          </div>
-        </div>
 
-        <div class="task-container">
-          <div v-if="tasks.length" class="task-grid">
-            <div
-              v-for="task in tasks"
-              :key="task.id"
-              class="task-item"
-              :class="{ 'task-completed': task.is_done }"
-            >
-              <div class="task-priority-indicator"></div>
-
-              <div class="task-content">
-                <div class="task-header">
-                  <div class="custom-checkbox">
-                    <input
-                      type="checkbox"
-                      :checked="task.is_done"
-                      @change="toggleDone(task)"
-                      class="checkbox-input"
-                      :disabled="isLoading"
-                      :id="`task-${task.id}`"
-                    />
-                    <label :for="`task-${task.id}`" class="checkbox-label">
-                      <div class="checkbox-icon">
-                        <i class="fas fa-check"></i>
-                      </div>
-                    </label>
-                  </div>
-
-                  <div class="task-actions">
-                    <button
-                      v-if="editingTaskId !== task.id"
-                      @click="startEdit(task)"
-                      class="action-btn edit-btn"
-                      title="Edit mission"
-                      :disabled="isLoading"
-                    >
-                      <i class="fas fa-edit"></i>
-                    </button>
-                    <button
-                      @click="deleteTask(task.id)"
-                      class="action-btn delete-btn"
-                      title="Abort mission"
-                      :disabled="isLoading"
-                    >
-                      <i class="fas fa-times"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <div class="task-body">
-                  <div v-if="editingTaskId === task.id" class="edit-mode">
-                    <div class="floating-input">
-                      <input
-                        v-model="editedTaskTitle"
-                        type="text"
-                        class="input-field edit-input"
-                        :disabled="isLoading"
-                        placeholder=" "
-                        id="editInput"
-                      />
-                      <label for="editInput" class="floating-label"
-                        >Mission name</label
-                      >
-                      <div class="input-highlight"></div>
-                    </div>
-                    <div class="edit-actions">
-                      <button
-                        @click="updateTask(task)"
-                        class="btn-save"
-                        :disabled="isLoading"
-                      >
-                        <i class="fas fa-save"></i>
-                        <span>Save</span>
-                      </button>
-                      <button
-                        @click="cancelEdit"
-                        class="btn-cancel"
-                        :disabled="isLoading"
-                      >
-                        <i class="fas fa-times"></i>
-                        <span>Cancel</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  <div v-else class="display-mode">
-                    <h3 class="task-title" :class="{ completed: task.is_done }">
-                      {{ task.title }}
-                    </h3>
-                    <div class="task-meta">
-                      <div class="deadline-badge">
-                        <i class="far fa-calendar-alt"></i>
-                        <span>{{ formatDate(task.deadline) }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="task-glow"></div>
-            </div>
-          </div>
-
-          <div v-else class="empty-state">
-            <div class="empty-icon">
+    <template v-if="isAuthenticated">
+      <header class="app-header">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo-icon">
               <i class="fas fa-seedling"></i>
             </div>
-            <h3 class="empty-title">No Task Added</h3>
-            <p class="empty-subtitle">
-              Your journey to productivity starts here ✨
-            </p>
+            <h1 class="header-title">Daily Flow</h1>
+          </div>
+          <p class="header-tagline">
+            Transform your daily routine into a masterpiece
+          </p>
+          <button @click="handleLogout" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <div class="add-task-section glassmorphism-card">
+          <input
+            type="text"
+            v-model="newTask"
+            @keyup.enter="addTask"
+            placeholder="Tambahkan tugas baru..."
+            class="task-input"
+          />
+          <input
+            type="date"
+            v-model="newDeadline"
+            class="deadline-input"
+          />
+          <button @click="addTask" class="add-button">
+            <i class="fas fa-plus"></i> Tambah
+          </button>
+        </div>
+
+        <div class="task-list-container glassmorphism-card">
+          <ul v-if="tasks.length" class="task-list">
+            <li v-for="task in sortedTasks" :key="task.id" class="task-item">
+              <div v-if="editingTaskId === task.id" class="edit-mode">
+                <input
+                  type="text"
+                  v-model="editedTaskTitle"
+                  class="edit-input"
+                />
+                <input
+                  type="date"
+                  v-model="editedTaskDeadline"
+                  class="edit-input"
+                />
+                <div class="edit-actions">
+                  <button @click="updateTask(task.id)" class="btn-save">
+                    <i class="fas fa-save"></i> Simpan
+                  </button>
+                  <button @click="cancelEdit" class="btn-cancel">
+                    <i class="fas fa-times"></i> Batal
+                  </button>
+                </div>
+              </div>
+              <div v-else class="view-mode">
+                <input
+                  type="checkbox"
+                  :checked="task.is_done"
+                  @change="toggleDone(task.id, task.is_done)"
+                  class="task-checkbox"
+                />
+                <span :class="{ 'task-done': task.is_done }" class="task-title">
+                  {{ task.title }}
+                </span>
+                <span class="task-deadline">
+                  Tenggat: {{ formatDate(task.deadline) }}
+                </span>
+                <div class="task-actions">
+                  <button @click="startEdit(task)" class="icon-button edit-button">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button @click="deleteTask(task.id)" class="icon-button delete-button">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <div v-else class="empty-state">
+            <i class="fas fa-clipboard-list empty-icon"></i>
+            <p class="empty-text">Belum ada tugas.</p>
+            <p class="empty-subtext">Tambahkan tugas baru untuk memulai!</p>
           </div>
         </div>
       </div>
-    </div>
+       <div class="stripe-section glassmorphism-card">
+        <h3>Dukung Daily Flow</h3>
+        <p>Bantu kami terus mengembangkan aplikasi ini!</p>
+        <button @click="processPayment" class="donate-button">
+          <i class="fas fa-heart"></i> Dukung dengan Stripe
+        </button>
+      </div>
+
+      <div class="map-section glassmorphism-card">
+        <h3>Lokasi Favorit Anda</h3>
+        <MapComponent />
+      </div>
+
+    </template>
   </div>
 </template>
 
@@ -229,8 +143,18 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { loadStripe } from '@stripe/stripe-js';
+import { logEvent } from 'firebase/analytics';
+import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import signOut
+import MapComponent from './MapComponent.vue';
+import AuthForm from './frontend/components/AuthForm.vue'; // Import AuthForm
 
 export default {
+  components: {
+    MapComponent,
+    AuthForm, // Daftarkan AuthForm
+  },
   data() {
     return {
       tasks: [],
@@ -238,25 +162,48 @@ export default {
       newDeadline: "",
       editingTaskId: null,
       editedTaskTitle: "",
-      isLoading: true,
-      unsubscribe: null,
+      editedTaskDeadline: "",
+      isLoading: true, // Mengelola loading state untuk task fetching
+      isLoadingAuth: true, // New: Mengelola loading state untuk autentikasi
+      isAuthenticated: false, // New: Status autentikasi
     };
   },
+  computed: {
+    sortedTasks() {
+      return [...this.tasks].sort((a, b) => {
+        if (a.is_done !== b.is_done) {
+          return a.is_done ? 1 : -1; // Tugas selesai di bagian bawah
+        }
+        return new Date(a.deadline) - new Date(b.deadline); // Urutkan berdasarkan tenggat waktu
+      });
+    },
+  },
   watch: {
-    $userId: {
+    // Memantau perubahan userId untuk memicu fetchTasksRealtime
+    "$userId": {
+      immediate: true, // Panggil handler segera saat komponen dibuat
       handler(newUserId) {
         if (newUserId) {
+          this.isAuthenticated = true; // Set isAuthenticated ke true jika ada userId
+          console.log("User authenticated, fetching tasks.");
           this.fetchTasksRealtime();
+          this.isLoadingAuth = false; // Auth selesai, sembunyikan loading
         } else {
-          if (this.unsubscribe) {
-            this.unsubscribe();
-            this.unsubscribe = null;
+          this.isAuthenticated = false; // Set isAuthenticated ke false
+          this.tasks = []; // Kosongkan task jika tidak ada user
+          this.isLoadingAuth = false; // Auth selesai, sembunyikan loading
+          // Redirect ke login jika belum di-redirect oleh router guard
+          if (this.$router.currentRoute.value.name !== 'Login') {
+              this.$router.push({ name: 'Login' });
           }
-          this.tasks = [];
         }
       },
-      immediate: true,
     },
+  },
+  async created() {
+    // Pindahkan inisialisasi onAuthStateChanged ke main.js.
+    // Di sini, kita hanya menunggu status auth yang sudah diatur di global properties.
+    // isLoadingAuth akan dikelola oleh main.js dan watch userId
   },
   beforeUnmount() {
     if (this.unsubscribe) {
@@ -264,55 +211,37 @@ export default {
     }
   },
   methods: {
-    fetchTasksRealtime() {
-      if (!this.$db || !this.$appId || !this.$userId) {
-        console.warn("Firebase atau ID pengguna belum tersedia.");
+    async fetchTasksRealtime() {
+      if (!this.$userId) {
+        console.warn("User ID tidak tersedia untuk mengambil tugas.");
+        this.tasks = [];
+        this.isLoading = false;
         return;
       }
-
       this.isLoading = true;
-
-      const tasksCollectionRef = collection(
-        this.$db,
-        `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+      const q = query(
+        collection(
+          this.$db,
+          `artifacts/${this.$appId}/users/${this.$userId}/tasks`
+        )
       );
-      const q = query(tasksCollectionRef);
-
       this.unsubscribe = onSnapshot(
         q,
         (snapshot) => {
-          const fetchedTasks = [];
-          snapshot.forEach((doc) => {
-            fetchedTasks.push({ id: doc.id, ...doc.data() });
-          });
-          this.tasks = fetchedTasks.sort((a, b) => {
-            if (a.is_done !== b.is_done) {
-              return a.is_done ? 1 : -1;
-            }
-            if (a.deadline && b.deadline) {
-              return new Date(a.deadline) - new Date(b.deadline);
-            }
-            if (a.created_at && b.created_at) {
-              const dateA = a.created_at.toDate
-                ? a.created_at.toDate()
-                : new Date(a.created_at);
-              const dateB = b.created_at.toDate
-                ? b.created_at.toDate()
-                : new Date(b.created_at);
-              return dateB - dateA;
-            }
-            return 0;
-          });
+          this.tasks = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
           this.isLoading = false;
-          console.log("Tugas diambil secara real-time:", this.tasks);
+          console.log("Tugas berhasil diambil secara real-time.");
         },
         (error) => {
-          console.error("Error saat mengambil tugas real-time:", error);
+          console.error("Error mengambil tugas:", error);
           this.isLoading = false;
+          // if (Sentry) Sentry.captureException(error);
         }
       );
     },
-
     async addTask() {
       if (!this.newTask.trim() || !this.newDeadline) return;
 
@@ -329,99 +258,207 @@ export default {
             created_at: new Date(),
           }
         );
+        console.log("Tugas ditambahkan ke Firestore.");
+
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'task_added', {
+            task_title: this.newTask,
+            deadline: this.newDeadline,
+          });
+        }
+
+        // --- Memicu email setelah tugas ditambahkan ---
+        const currentUserEmail = this.$auth.currentUser?.email;
+        if (currentUserEmail) {
+          const emailSubject = `Daily Flow: Task Added!`;
+          const emailText = `Hello,\n\nYou have successfully added a new task:\n\nTitle: "${this.newTask}"\nDeadline: ${this.formatDate(this.newDeadline)}\n\nKeep up the great work!`;
+          const emailHtml = `
+            <p>Hello,</p>
+            <p>You have successfully added a new task to Daily Flow:</p>
+            <p><strong>Title:</strong> ${this.newTask}</p>
+            <p><strong>Deadline:</strong> ${this.formatDate(this.newDeadline)}</p>
+            <p>Keep up the great work!</p>
+          `;
+          this.sendEmailNotification(currentUserEmail, emailSubject, emailText, emailHtml);
+        } else {
+            console.warn("User email not available to send task added notification.");
+        }
+
+        // --- Memicu notifikasi push setelah tugas ditambahkan ---
+        this.sendPushNotificationToUser(
+            this.$userId,
+            'Daily Flow: New Task Added!',
+            `"${this.newTask}" has been added to your list. Deadline: ${this.formatDate(this.newDeadline)}.`
+        );
+
         this.newTask = "";
         this.newDeadline = "";
-        console.log("Tugas ditambahkan ke Firestore.");
+
       } catch (err) {
         console.error("Gagal menambahkan tugas:", err);
+        // if (Sentry) Sentry.captureException(err);
       }
     },
-
     async deleteTask(id) {
-      if (!id) return;
-
       try {
         await deleteDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            id
-          )
+          doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id)
         );
-        console.log(`Tugas dengan ID ${id} dihapus.`);
+        console.log("Tugas dihapus dari Firestore.");
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'task_deleted');
+        }
       } catch (err) {
         console.error("Gagal menghapus tugas:", err);
+        // if (Sentry) Sentry.captureException(err);
       }
     },
-
-    async toggleDone(task) {
-      if (!task || !task.id) return;
-
+    async toggleDone(id, currentStatus) {
       try {
         await updateDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            task.id
-          ),
+          doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id),
           {
-            is_done: !task.is_done,
+            is_done: !currentStatus,
           }
         );
-        console.log(`Status selesai tugas dengan ID ${task.id} diperbarui.`);
+        console.log("Status tugas diperbarui di Firestore.");
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'task_toggled', { status: !currentStatus });
+        }
       } catch (err) {
         console.error("Gagal memperbarui status tugas:", err);
+        // if (Sentry) Sentry.captureException(err);
       }
     },
-
     startEdit(task) {
       this.editingTaskId = task.id;
       this.editedTaskTitle = task.title;
+      this.editedTaskDeadline = task.deadline;
     },
-
     cancelEdit() {
       this.editingTaskId = null;
       this.editedTaskTitle = "";
+      this.editedTaskDeadline = "";
     },
-
-    async updateTask(task) {
-      if (!this.editedTaskTitle.trim() || !task || !task.id) return;
-
+    async updateTask(id) {
       try {
         await updateDoc(
-          doc(
-            this.$db,
-            `artifacts/${this.$appId}/users/${this.$userId}/tasks`,
-            task.id
-          ),
+          doc(this.$db, `artifacts/${this.$appId}/users/${this.$userId}/tasks`, id),
           {
             title: this.editedTaskTitle,
+            deadline: this.editedTaskDeadline,
           }
         );
-        this.editingTaskId = null;
-        this.editedTaskTitle = "";
-        console.log(`Tugas dengan ID ${task.id} diperbarui.`);
+        console.log("Tugas diperbarui di Firestore.");
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'task_updated');
+        }
+        this.cancelEdit(); // Keluar dari mode edit
       } catch (err) {
         console.error("Gagal memperbarui tugas:", err);
+        // if (Sentry) Sentry.captureException(err);
       }
     },
-
     formatDate(dateString) {
-      if (!dateString) return "";
+      if (!dateString) return "No Deadline";
       const date = new Date(dateString);
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      return date.toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    },
+    async processPayment() {
+      const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+      if (!publishableKey) {
+        alert("Kunci publik Stripe tidak diatur. Tidak dapat memproses pembayaran.");
+        return;
+      }
+      try {
+        const stripe = await loadStripe(publishableKey);
+        // Implementasi sebenarnya akan memanggil Firebase Function untuk membuat PaymentIntent
+        // Untuk demo, ini adalah placeholder.
+        alert("Simulasi pembayaran berhasil! Terima kasih atas dukungan Anda.");
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'payment_processed');
+        }
+      } catch (error) {
+        console.error("Kesalahan pembayaran:", error);
+        alert("Terjadi kesalahan saat memproses pembayaran.");
+        // if (Sentry) Sentry.captureException(error);
+      }
+    },
+    async sendEmailNotification(toEmail, subject, textContent, htmlContent) {
+      if (!toEmail || !subject || !textContent) {
+        console.warn("Missing email parameters for notification.");
+        return;
+      }
+      try {
+        const functions = getFunctions();
+        const sendEmail = httpsCallable(functions, 'sendEmail');
 
-      if (date.toDateString() === today.toDateString()) {
-        return "Today";
-      } else if (date.toDateString() === tomorrow.toDateString()) {
-        return "Tomorrow";
-      } else {
-        return date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
+        const result = await sendEmail({
+          to: toEmail,
+          subject: subject,
+          text: textContent,
+          html: htmlContent,
         });
+
+        console.log('Email notification sent:', result.data.message);
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'email_sent', {
+            email_type: subject.includes("New Task") ? 'new_task' : 'general_notification',
+            to_email: toEmail,
+          });
+        }
+      } catch (error) {
+        console.error("Error sending email notification:", error);
+        // if (Sentry) Sentry.captureException(error);
+        alert(`Failed to send email: ${error.message}`);
+      }
+    },
+    async sendPushNotificationToUser(targetUserId, title, body, customData = {}) {
+      if (!targetUserId || !title || !body) {
+        console.warn("Missing parameters for push notification.");
+        return;
+      }
+
+      try {
+        const functions = getFunctions();
+        const sendPushNotification = httpsCallable(functions, 'sendPushNotification');
+
+        const result = await sendPushNotification({
+          userId: targetUserId,
+          title: title,
+          body: body,
+          customData: customData,
+        });
+
+        console.log('Push notification result:', result.data);
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'push_notification_sent', {
+            target_user_id: targetUserId,
+            notification_type: title,
+          });
+        }
+      } catch (error) {
+        console.error("Error sending push notification:", error);
+        // if (Sentry) Sentry.captureException(error);
+        alert(`Failed to send push notification: ${error.message}`);
+      }
+    },
+    async handleLogout() {
+      try {
+        await signOut(this.$auth);
+        console.log('User logged out.');
+        if (this.$analytics) {
+          logEvent(this.$analytics, 'logout');
+        }
+        // $userId akan berubah menjadi null, memicu watcher untuk mengosongkan task dan redirect
+      } catch (error) {
+        console.error('Error logging out:', error);
+        alert(`Failed to logout: ${error.message}`);
+        // if (Sentry) Sentry.captureException(error);
       }
     },
   },
@@ -1059,6 +1096,43 @@ export default {
 .empty-subtitle {
   opacity: 0.75;
   font-size: 0.9rem;
+}
+
+.logout-button {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); /* Reddish */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem; /* Sesuaikan posisi jika perlu */
+}
+
+.logout-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(192, 57, 43, 0.4);
+}
+
+/* Update loading overlay style to cover whole screen */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.85); /* Slightly opaque white */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top */
+  transition: opacity 0.3s ease-in-out;
 }
 
 /* Responsive design */

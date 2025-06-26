@@ -1,66 +1,162 @@
-// main.js
-import { createApp } from 'vue';
-import App from './App.vue';
-import './assets/main.css';
+// functions/index.js
+const functions = require("firebase-functions");
+const sgMail = require("@sendgrid/mail");
+const admin = require("firebase-admin");
 
-// Import Firebase modules
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth'; 
-import { getFirestore, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-
-// Dapatkan konfigurasi Firebase dari variabel lingkungan.
-// PENTING: Variabel-variabel ini harus diatur di Netlify (misalnya, VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, dll.)
-// Jika Anda menggunakan Vue CLI, ganti 'import.meta.env.VITE_' dengan 'process.env.VUE_APP_'.
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "" // Opsional, tambahkan jika Anda menggunakannya
-};
-
-// Periksa apakah konfigurasi Firebase penting sudah tersedia
-if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-  console.error("Variabel lingkungan konfigurasi Firebase hilang. Harap atur di Netlify.");
-  // Tampilkan pesan error di UI jika Anda mau, atau hentikan proses.
-  // Untuk lingkungan Canvas, ini akan menggunakan nilai kosong, tetapi di Netlify
-  // ini seharusnya diisi jika variabel lingkungan diatur.
-} else {
-  // Inisialisasi Aplikasi Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
-
-  // Buat instance aplikasi Vue
-  const vueApp = createApp(App);
-
-  // Ekspos instance Firebase dan variabel global lainnya ke semua komponen Vue
-  // Ini memungkinkan komponen mengakses this.$db, this.$auth, dll.
-  vueApp.config.globalProperties.$db = db;
-  vueApp.config.globalProperties.$auth = auth;
-  // Gunakan projectId sebagai $appId untuk jalur koleksi Firestore dalam setup umum ini
-  vueApp.config.globalProperties.$appId = firebaseConfig.projectId;
-  vueApp.config.globalProperties.$userId = null; // Akan diatur setelah status autentikasi ditentukan
-
-  // Otentikasi pengguna
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      // Untuk Netlify (dan deployment umum), kita hanya mengandalkan sign-in anonim
-      // karena __initial_auth_token spesifik untuk lingkungan Canvas.
-      try {
-        await signInAnonymously(auth);
-        console.log("Berhasil masuk secara anonim.");
-      } catch (anonError) {
-        console.error("Error saat masuk secara anonim:", anonError);
-      }
-    }
-    // Setelah terautentikasi (atau masuk secara anonim), atur userId
-    vueApp.config.globalProperties.$userId = auth.currentUser?.uid || crypto.randomUUID();
-    console.log("User ID:", vueApp.config.globalProperties.$userId);
-
-    // Mount aplikasi hanya setelah status autentikasi diselesaikan
-    vueApp.mount('#app');
-  });
+// Inisialisasi Firebase Admin SDK
+// Penting: Pastikan ini diinisialisasi hanya sekali
+if (admin.apps.length === 0) {
+  admin.initializeApp();
 }
+
+sgMail.setApiKey(functions.config().sendgrid.apikey);
+
+/**
+ * Fungsi callable HTTP untuk mengirim email menggunakan SendGrid.
+ * Fungsi ini dapat dipanggil dari sisi klien.
+ *
+ * @param {object} data - Data permintaan: { to, subject, text, html?, from? }
+ * @param {object} context - Konteks fungsi, berisi informasi autentikasi.
+ * @returns {Promise<object>} - Hasil pengiriman email.
+ */
+exports.sendEmail = functions.https.onCall(async (data, context) => {
+  // Hanya pengguna yang terautentikasi yang bisa memanggil fungsi ini
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+        "unauthenticated",
+        "Fungsi ini harus dipanggil dalam kondisi terautentikasi.",
+    );
+  }
+
+  const {to, subject, text, html} = data;
+  // Gunakan email pengirim default jika tidak ditentukan
+  const fromEmail = data.from || functions.config().sendgrid.senderemail;
+
+  if (!to || !subject || !text) {
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Parameter email yang diperlukan (to, subject, atau text) tidak ada.",
+    );
+  }
+
+  const msg = {
+    to: to,
+    from: fromEmail,
+    subject: subject,
+    text: text,
+    html: html || `<p>${text.replace(/\n/g, "<br/>")}</p>`, // Fallback HTML
+  };
+
+  try {
+    await sgMail.send(msg);
+    functions.logger.info(
+        `Email berhasil dikirim ke ${to} dengan subjek: ${subject}`,
+    );
+    return {success: true, message: "Email berhasil dikirim!"};
+  } catch (error) {
+    functions.logger.error(
+        "Error saat mengirim email:",
+        error.response ? error.response.body : error,
+    );
+    throw new functions.https.HttpsError(
+        "internal",
+        "Gagal mengirim email.",
+        error.response ? error.response.body : error.message,
+    );
+  }
+});
+
+/**
+ * Fungsi callable HTTP untuk mengirim notifikasi push FCM.
+ * Fungsi ini dapat dipanggil dari sisi klien.
+ *
+ * @param {object} data - Data permintaan: { userId, title, body, customData? }
+ * @param {object} context - Konteks fungsi, berisi informasi autentikasi.
+ * @returns {Promise<object>} - Hasil pengiriman notifikasi.
+ */
+exports.sendPushNotification = functions.https.onCall(async (data, context) => {
+  // Hanya pengguna yang terautentikasi yang bisa memanggil fungsi ini
+  if (!context.auth) {
+    throw new functions.https.HttpsError(
+        "unauthenticated",
+        "Fungsi ini harus dipanggil dalam kondisi terautentikasi.",
+    );
+  }
+
+  const {userId, title, body, customData} = data;
+  const db = admin.firestore(); // Dapatkan instance Firestore dari Admin SDK
+
+  if (!userId || !title || !body) {
+    throw new functions.https.HttpsError(
+        "invalid-argument",
+        "Parameter yang diperlukan (userId, title, atau body) tidak ada.",
+    );
+  }
+
+  try {
+    // Ambil semua token FCM untuk pengguna ini dari Firestore
+    // Struktur koleksi disesuaikan dengan aturan keamanan baru Anda
+    const userTokensSnapshot = await db
+        .collection(
+            `artifacts/${
+              functions.config().firebase.project_id
+            }/users/${userId}/fcmTokens`,
+        )
+        .get();
+
+    const tokens = userTokensSnapshot.docs.map((doc) => doc.data().token);
+
+    if (tokens.length === 0) {
+      functions.logger.warn(`No FCM tokens for ${userId}. Notif skipped.`);
+      return {
+        success: false,
+        message: "Tidak ada token ditemukan untuk pengguna.",
+      };
+    }
+
+    const message = {
+      notification: {
+        title: title,
+        body: body,
+      },
+      data: customData || {}, // Payload data kustom opsional
+    };
+
+    const multicastMessage = {
+      ...message,
+      tokens: tokens,
+    };
+
+    // Kirim pesan ke semua token yang ditemukan
+    const response = await admin.messaging().sendEachForMulticast(multicastMessage);
+
+    functions.logger.info(`Sent ${response.successCount} notifs to ${userId}.`);
+    if (response.failureCount > 0) {
+      const failedTokens = [];
+      response.responses.forEach((resp, idx) => {
+        if (!resp.success) {
+          failedTokens.push(tokens[idx]);
+          functions.logger.error(
+              `Failed to send to token ${tokens[idx]}: ${resp.error}`,
+          );
+          // Opsional: Hapus token yang tidak valid dari Firestore untuk membersihkan
+          // Contoh: await userTokensSnapshot.docs[idx].ref.delete();
+        }
+      });
+      functions.logger.warn(`Failed tokens: ${failedTokens}`);
+    }
+
+    return {
+      success: true,
+      message: "Notifikasi push berhasil dikirim!",
+      successCount: response.successCount,
+    };
+  } catch (error) {
+    functions.logger.error("Error sending notif:", error);
+    throw new functions.https.HttpsError(
+        "internal",
+        "Gagal mengirim notifikasi push.",
+        error.message,
+    );
+  }
+});
