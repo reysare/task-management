@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import TaskList from '../TaskList.vue'; // Assuming TaskList is App.vue or a dedicated component
+import TaskList from '../TaskList.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: TaskList, // If your App.vue handles the list directly, you might use App here
+    component: TaskList,
   },
 ];
 
