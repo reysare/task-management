@@ -15,13 +15,18 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
-  // Bagian BARU yang ditambahkan untuk mengoptimalkan dependensi
   optimizeDeps: {
     include: [
       'firebase/app',
       'firebase/auth',
       'firebase/firestore',
-      'axios', // Tambahkan ini jika axios yang menyebabkan masalah
+      'axios',
     ],
+  },
+  // Bagian BARU yang ditambahkan untuk membantu Vite mentransformasi dependensi CJS
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/], // Proses semua modul CJS di node_modules
+    },
   },
 })

@@ -148,7 +148,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { logEvent } from 'firebase/analytics';
 import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import signOut
 import MapComponent from './MapComponent.vue';
-import AuthForm from './frontend/components/AuthForm.vue'; // Import AuthForm
+import AuthForm from './components/AuthForm.vue'; // Import AuthForm
 
 export default {
   components: {
